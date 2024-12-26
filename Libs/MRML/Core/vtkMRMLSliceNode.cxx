@@ -927,7 +927,14 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLWriteXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
+  vtkMRMLWriteXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
   vtkMRMLWriteXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
+  vtkMRMLWriteXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
 
   vtkMRMLWriteXMLEndMacro();
 }
@@ -1022,7 +1029,15 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLReadXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
+  // slice view annotations
+  vtkMRMLReadXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
   vtkMRMLReadXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
+  vtkMRMLReadXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
 
   vtkMRMLReadXMLEndMacro();
 
@@ -2114,7 +2129,49 @@ vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserverTopLeftTextNode(vtkMRMLNode* textNode)
+void vtkMRMLSliceNode::SetAndObserveBottomLeftTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetBottomLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveBottomRightTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetBottomRightTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveTopLeftTextNode(vtkMRMLNode* textNode)
 {
   this->SetAndObserveNodeReferenceID(this->GetTopLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveTopRightTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetTopRightTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveBottomEdgeTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetBottomEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveRightEdgeTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetRightEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveLeftEdgeTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetLeftEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserveTopEdgeTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetTopEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
 }
