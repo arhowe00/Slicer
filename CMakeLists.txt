@@ -23,6 +23,9 @@ if(NOT CMAKE_CXX_STANDARD MATCHES "^(17|20)$")
   message(FATAL_ERROR "CMAKE_CXX_STANDARD must be set to 17 or 20")
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "Enable compile_commands.json for all subprojects" FORCE)
+
 # Prevent unnecessary re-linking on Linux
 #
 # See https://discourse.slicer.org/t/build-when-git-commit-is-changed/29607/12

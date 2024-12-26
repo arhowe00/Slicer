@@ -350,6 +350,7 @@ class SliceAnnotations(VTKObservationMixin):
 
         self.sliceViews[sliceViewName] = sliceView
         sliceLogic = sliceWidget.sliceLogic()
+        # making sure the slice (self) observs slice logic for modifications.
         self.addObserver(sliceLogic, vtk.vtkCommand.ModifiedEvent, self.updateViewAnnotations)
 
     def createActors(self, sliceViewName):
@@ -357,6 +358,8 @@ class SliceAnnotations(VTKObservationMixin):
         self.sliceWidgets[sliceViewName] = sliceWidget
 
     def updateViewAnnotations(self, caller, event):
+        # caller is the slice logic and the event is when the slice logic
+        # is modified.
         if not self.sliceViewAnnotationsEnabled:
             # when self.sliceViewAnnotationsEnabled is set to false
             # then annotation and scalar bar gets hidden, therefore
@@ -367,6 +370,7 @@ class SliceAnnotations(VTKObservationMixin):
         if layoutManager is None:
             return
         sliceViewNames = layoutManager.sliceViewNames()
+        # Making sure slice views are all there and observing logic
         for sliceViewName in sliceViewNames:
             if sliceViewName not in self.sliceViewNames:
                 self.sliceViewNames.append(sliceViewName)
@@ -403,6 +407,11 @@ class SliceAnnotations(VTKObservationMixin):
 
         self.sliceViews[sliceViewName].scheduleRender()
 
+    # This seems to start by fetching everything related to the slice
+    # logic. Look at sliceLogic and how you get the composite node for example.
+    # resetTexts is called, info is fetched, and then the annotations
+    # are updated.
+
     def makeAnnotationText(self, sliceLogic):
         self.resetTexts()
         sliceCompositeNode = sliceLogic.GetSliceCompositeNode()
@@ -412,9 +421,10 @@ class SliceAnnotations(VTKObservationMixin):
         # Get the layers
         backgroundLayer = sliceLogic.GetBackgroundLayer()
         foregroundLayer = sliceLogic.GetForegroundLayer()
-        labelLayer = sliceLogic.GetLabelLayer()
+        labelLayer = sliceLogic.GetLabelLayer() # This is the layer where
+        # the text shows up!!!!!
 
-        # Get the volumes
+        # Get the volumes (extracted from layers!)
         backgroundVolume = backgroundLayer.GetVolumeNode()
         foregroundVolume = foregroundLayer.GetVolumeNode()
         labelVolume = labelLayer.GetVolumeNode()
@@ -636,6 +646,8 @@ class SliceAnnotations(VTKObservationMixin):
             text = text[:preSize] + "..." + text[-postSize:]
         return text
 
+    # After setting up all the corner text in makeAnnotationText, this is the
+    # final nail in getting the annotations drawn on the screen.
     def drawCornerAnnotations(self, sliceViewName):
         if not self.sliceViewAnnotationsEnabled:
             return

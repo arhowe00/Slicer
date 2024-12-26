@@ -28,6 +28,7 @@
 #include "vtkSlicerModuleLogic.h"
 
 // MRML includes
+class vtkMRMLAnnotationNode;
 
 // STD includes
 #include <cstdlib>
@@ -40,6 +41,19 @@ class VTK_SLICER_CORNERTEXT_MODULE_LOGIC_EXPORT vtkSlicerCornerTextLogic :
 {
 public:
 
+  enum TextLocation
+  {
+    CORNER_BL,
+    CORNER_BR,
+    CORNER_TL,
+    CORNER_TR,
+    EDGE_B,
+    EDGE_R,
+    EDGE_L,
+    EDGE_T
+  };
+
+  /// The Usual vtk class functions
   static vtkSlicerCornerTextLogic *New();
   vtkTypeMacro(vtkSlicerCornerTextLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -49,6 +63,7 @@ protected:
   ~vtkSlicerCornerTextLogic() override;
 
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+
   /// Register MRML Node classes to Scene. Gets called automatically when the MRMLScene is attached to this logic class.
   void RegisterNodes() override;
   void UpdateFromMRMLScene() override;
