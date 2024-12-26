@@ -565,6 +565,19 @@ public:
 
   virtual vtkImplicitFunction* GetImplicitFunctionWorld();
 
+  ///@{
+  /// Node reference role for top-left text that is used in the slice view
+  const char* GetTopLeftTextNodeReferenceRole() { return "topLeftText"; }
+  const char* GetTopLeftTextNodeReferenceMRMLAttributeName() { return "topLeftTextRef"; };
+
+  /// Get/set the slab reconstruction visibility.
+  vtkGetMacro(TopLeftTextEnabled, bool);
+  vtkSetMacro(TopLeftTextEnabled, bool);
+  vtkBooleanMacro(TopLeftTextEnabled, bool);
+
+  void SetAndObserverTopLeftTextNode(vtkMRMLNode* textNode);
+  ///}@
+
 protected:
   vtkMRMLSliceNode();
   ~vtkMRMLSliceNode() override;
@@ -630,6 +643,8 @@ protected:
   std::vector< std::string > ThreeDViewIDs;
 
   vtkSmartPointer<vtkPlane> ImplicitFunction;
+
+  bool TopLeftTextEnabled{false};
 };
 
 //----------------------------------------------------------------------------

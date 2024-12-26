@@ -927,6 +927,8 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLWriteXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
+  vtkMRMLWriteXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
+
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -1019,6 +1021,8 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(slabReconstructionType, SlabReconstructionType);
   vtkMRMLReadXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLReadXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
+
+  vtkMRMLReadXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
 
   vtkMRMLReadXMLEndMacro();
 
@@ -2107,4 +2111,10 @@ int vtkMRMLSliceNode::GetSlabReconstructionTypeFromString(const char* name)
 vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
 {
   return this->ImplicitFunction;
+}
+
+//-----------------------------------------------------------
+void vtkMRMLSliceNode::SetAndObserverTopLeftTextNode(vtkMRMLNode* textNode)
+{
+  this->SetAndObserveNodeReferenceID(this->GetTopLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
 }
