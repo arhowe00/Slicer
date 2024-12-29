@@ -20,6 +20,9 @@
 
 // MRML includes
 #include <vtkMRMLScene.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLTextNode.h>
+#include <vtkXMLDataParser.h>
 
 // VTK includes
 #include <vtkIntArray.h>
@@ -81,3 +84,65 @@ void vtkSlicerCornerTextLogic
 ::OnMRMLSceneNodeRemoved(vtkMRMLNode* vtkNotUsed(node))
 {
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLNode* vtkSlicerCornerTextLogic
+::GetTextNodeFromSliceView(vtkMRMLSliceNode* sliceNode, TextLocation location)
+{
+  switch (location) {
+      case CORNER_BL:
+          return sliceNode->GetNodeReference("bottomLeftText");
+      case CORNER_BR:
+          return sliceNode->GetNodeReference("bottomRightText");
+      case CORNER_TL:
+          return sliceNode->GetNodeReference("topLeftText");
+      case CORNER_TR:
+          return sliceNode->GetNodeReference("topRightText");
+      case EDGE_B:
+          return sliceNode->GetNodeReference("bottomEdgeText");
+      case EDGE_R:
+          return sliceNode->GetNodeReference("rightEdgeText");
+      case EDGE_L:
+          return sliceNode->GetNodeReference("leftEdgeText");
+      case EDGE_T:
+          return sliceNode->GetNodeReference("topEdgeText");
+      default:
+          return nullptr;
+  }
+}
+
+//----------------------------------------------------------------------------
+vtkXMLDataElement* vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode* textNode)
+{
+  if (!textNode)
+  {
+    return nullptr;
+  }
+
+  std::istringstream iss(textNode->GetText(), std::istringstream::in);
+  vtkNew<vtkXMLDataParser> parser;
+  parser->SetStream(&iss);
+  parser->Parse();
+
+  vtkXMLDataElement* root = parser->GetRootElement();
+  if (root==nullptr)
+  {
+    vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
+    return nullptr;
+  }
+
+  // if we don't register, then the root element will be destroyed when the
+  // parser gets out of scope
+  root->Register(nullptr);
+  return root;
+}
+
+
+// //---------------------------------------------------------------------------
+// std::string vtkSlicerCornerTextLogic
+// ::GenerateCornerAnnotation(vtkMRMLSliceNode* sliceNode, vtkMRMLTextNode* textNode)
+// {
+//  vtkXMLDataElement* ele = ParseTextNode(textNode);
+// 
+// 
+// }

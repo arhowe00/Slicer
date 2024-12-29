@@ -29,6 +29,9 @@
 
 // MRML includes
 class vtkMRMLAnnotationNode;
+class vtkMRMLSliceNode;
+class vtkMRMLTextNode;
+class vtkXMLDataElement;
 
 // STD includes
 #include <cstdlib>
@@ -73,6 +76,11 @@ private:
 
   vtkSlicerCornerTextLogic(const vtkSlicerCornerTextLogic&); // Not implemented
   void operator=(const vtkSlicerCornerTextLogic&); // Not implemented
+
+  vtkMRMLNode* GetTextNodeFromSliceView(vtkMRMLSliceNode*, TextLocation);
+  vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
+  std::string GenerateCornerAnnotation(vtkMRMLSliceNode*, vtkMRMLTextNode*); 
+
 };
 
 #endif
