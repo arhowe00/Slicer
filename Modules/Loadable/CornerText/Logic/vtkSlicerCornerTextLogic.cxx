@@ -90,29 +90,30 @@ vtkMRMLNode* vtkSlicerCornerTextLogic
 ::GetTextNodeFromSliceView(vtkMRMLSliceNode* sliceNode, TextLocation location)
 {
   switch (location) {
-      case CORNER_BL:
-          return sliceNode->GetNodeReference("bottomLeftText");
-      case CORNER_BR:
-          return sliceNode->GetNodeReference("bottomRightText");
-      case CORNER_TL:
-          return sliceNode->GetNodeReference("topLeftText");
-      case CORNER_TR:
-          return sliceNode->GetNodeReference("topRightText");
-      case EDGE_B:
-          return sliceNode->GetNodeReference("bottomEdgeText");
-      case EDGE_R:
-          return sliceNode->GetNodeReference("rightEdgeText");
-      case EDGE_L:
-          return sliceNode->GetNodeReference("leftEdgeText");
-      case EDGE_T:
-          return sliceNode->GetNodeReference("topEdgeText");
-      default:
-          return nullptr;
+    case CORNER_BL:
+      return sliceNode->GetNodeReference("bottomLeftText");
+    case CORNER_BR:
+      return sliceNode->GetNodeReference("bottomRightText");
+    case CORNER_TL:
+      return sliceNode->GetNodeReference("topLeftText");
+    case CORNER_TR:
+      return sliceNode->GetNodeReference("topRightText");
+    case EDGE_B:
+      return sliceNode->GetNodeReference("bottomEdgeText");
+    case EDGE_R:
+      return sliceNode->GetNodeReference("rightEdgeText");
+    case EDGE_L:
+      return sliceNode->GetNodeReference("leftEdgeText");
+    case EDGE_T:
+      return sliceNode->GetNodeReference("topEdgeText");
+    default:
+      return nullptr;
   }
 }
 
 //----------------------------------------------------------------------------
-vtkXMLDataElement* vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode* textNode)
+vtkXMLDataElement *
+vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
 {
   if (!textNode)
   {
@@ -126,12 +127,12 @@ vtkXMLDataElement* vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode* text
   parser->SetStream(&iss);
   parser->Parse();
 
-  vtkXMLDataElement* root = parser->GetRootElement();
-  if (root==nullptr)
+  vtkXMLDataElement *root = parser->GetRootElement();
+  if (root == nullptr) 
   {
     // this should not occur because we wrapped with a root tag. However we
     // should consider a check if the node had a root tag already.
-    vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
+    vtkErrorWithObjectMacro(parser, "vtkSlicerCornerTextLogic::ParseTextNode: failed to parse layout description");
     return nullptr;
   }
 
