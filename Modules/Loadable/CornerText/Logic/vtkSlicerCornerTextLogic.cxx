@@ -119,7 +119,9 @@ vtkXMLDataElement* vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode* text
     return nullptr;
   }
 
-  std::istringstream iss(textNode->GetText(), std::istringstream::in);
+  std::string wrappedText = "<root>" + textNode->GetText() + "</root>";
+
+  std::istringstream iss(wrappedText, std::istringstream::in);
   vtkNew<vtkXMLDataParser> parser;
   parser->SetStream(&iss);
   parser->Parse();
@@ -127,6 +129,8 @@ vtkXMLDataElement* vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode* text
   vtkXMLDataElement* root = parser->GetRootElement();
   if (root==nullptr)
   {
+    // this should not occur because we wrapped with a root tag. However we
+    // should consider a check if the node had a root tag already.
     vtkErrorWithObjectMacro(parser, "vtkMRMLLayoutNode::ParseLayout: failed to parse layout description");
     return nullptr;
   }
