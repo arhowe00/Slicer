@@ -66,17 +66,21 @@ class vtkMRMLCornerTextDisplayableManager::vtkInternal
 {
 public:
 
-  vtkInternal( vtkMRMLCornerTextDisplayableManager* external );
-  ~vtkInternal();
-  struct Pipeline
+  enum TextLocation
   {
-    vtkSmartPointer<vtkProp> Actor;
-    vtkSmartPointer<vtk> TransformToSlice;
-    vtkSmartPointer<vtkPolyDataFilter> Transformer;
+    CORNER_BL,
+    CORNER_BR,
+    CORNER_TL,
+    CORNER_TR,
+    EDGE_B,
+    EDGE_R,
+    EDGE_L,
+    EDGE_T
   };
 
-  typedef std::map < vtkMRMLDisplayNode*, const Pipeline* > PipelinesCacheType;
-  PipelinesCacheType DisplayPipelines;
+  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
+                                               CORNER_TR, EDGE_B,    EDGE_R,
+                                               EDGE_L,    EDGE_T};
 
   typedef std::map < vtkMRMLNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
   ToDisplayCacheType TransformToDisplayNodes;
@@ -89,6 +93,7 @@ public:
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode* sliceNode);
   void UpdateSliceNode();
+  vtkMRMLNode* GetTextNodeFromSliceNode(vtkMRMLSliceNode*, TextLocation);
 
   // Display Nodes
   void AddDisplayNode(vtkMRMLNode*, vtkMRMLTransformDisplayNode*);
@@ -173,6 +178,33 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
     this->UpdateDisplayNodePipeline(it->first, it->second);
   }
 }
+
+//---------------------------------------------------------------------------
+vtkMRMLNode* vtkMRMLCornerTextDisplayableManager::vtkInternal::
+GetTextNodeFromSliceNode(vtkMRMLSliceNode* sliceNode, TextLocation location)
+{
+  switch (location) {
+    case CORNER_BL:
+      return sliceNode->GetNodeReference("bottomLeftText");
+    case CORNER_BR:
+      return sliceNode->GetNodeReference("bottomRightText");
+    case CORNER_TL:
+      return sliceNode->GetNodeReference("topLeftText");
+    case CORNER_TR:
+      return sliceNode->GetNodeReference("topRightText");
+    case EDGE_B:
+      return sliceNode->GetNodeReference("bottomEdgeText");
+    case EDGE_R:
+      return sliceNode->GetNodeReference("rightEdgeText");
+    case EDGE_L:
+      return sliceNode->GetNodeReference("leftEdgeText");
+    case EDGE_T:
+      return sliceNode->GetNodeReference("topEdgeText");
+    default:
+      return nullptr;
+  }
+}
+
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::AddNode(vtkMRMLTransformNode* node)

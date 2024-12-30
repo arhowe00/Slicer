@@ -85,32 +85,6 @@ void vtkSlicerCornerTextLogic
 {
 }
 
-//---------------------------------------------------------------------------
-vtkMRMLNode* vtkSlicerCornerTextLogic
-::GetTextNodeFromSliceView(vtkMRMLSliceNode* sliceNode, TextLocation location)
-{
-  switch (location) {
-    case CORNER_BL:
-      return sliceNode->GetNodeReference("bottomLeftText");
-    case CORNER_BR:
-      return sliceNode->GetNodeReference("bottomRightText");
-    case CORNER_TL:
-      return sliceNode->GetNodeReference("topLeftText");
-    case CORNER_TR:
-      return sliceNode->GetNodeReference("topRightText");
-    case EDGE_B:
-      return sliceNode->GetNodeReference("bottomEdgeText");
-    case EDGE_R:
-      return sliceNode->GetNodeReference("rightEdgeText");
-    case EDGE_L:
-      return sliceNode->GetNodeReference("leftEdgeText");
-    case EDGE_T:
-      return sliceNode->GetNodeReference("topEdgeText");
-    default:
-      return nullptr;
-  }
-}
-
 //----------------------------------------------------------------------------
 vtkXMLDataElement *
 vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
