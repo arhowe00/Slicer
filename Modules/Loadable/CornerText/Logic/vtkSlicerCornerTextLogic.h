@@ -56,6 +56,12 @@ public:
     EDGE_T
   };
 
+  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
+                                               CORNER_TR, EDGE_B,    EDGE_R,
+                                               EDGE_L,    EDGE_T};
+
+  static vtkMRMLNode* GetTextNodeFromSliceView(vtkMRMLSliceNode*, TextLocation);
+
   /// The Usual vtk class functions
   static vtkSlicerCornerTextLogic *New();
   vtkTypeMacro(vtkSlicerCornerTextLogic, vtkSlicerModuleLogic);
@@ -77,7 +83,6 @@ private:
   vtkSlicerCornerTextLogic(const vtkSlicerCornerTextLogic&); // Not implemented
   void operator=(const vtkSlicerCornerTextLogic&); // Not implemented
 
-  vtkMRMLNode* GetTextNodeFromSliceView(vtkMRMLSliceNode*, TextLocation);
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
   std::string GenerateCornerAnnotation(vtkMRMLSliceNode*, vtkMRMLTextNode*); 
 
