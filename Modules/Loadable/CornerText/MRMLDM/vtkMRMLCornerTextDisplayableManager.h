@@ -2,8 +2,6 @@
 
   Program: 3D Slicer
 
-  Portions (c) Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
-
   See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
@@ -12,11 +10,6 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-  This file was originally developed by Andras Lasso and Franklin King at
-  PerkLab, Queen's University and was supported through the Applied Cancer
-  Research Unit program of Cancer Care Ontario with funds provided by the
-  Ontario Ministry of Health and Long-Term Care.
 
 ==============================================================================*/
 
@@ -27,32 +20,15 @@
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
 #include "vtkSlicerCornerTextModuleMRMLDisplayableManagerExport.h"
 
-/// \brief Displayable manager for showing transforms in slice (2D) views.
+/// \brief Displayable manager for showing annotations in slice (2D) views.
 ///
-/// Displays transforms in slice viewers as glyphs, deformed grid, or
-/// contour lines
+/// Displays annotations in corners & edges of slice views
 ///
 class VTK_SLICER_CORNERTEXT_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLCornerTextDisplayableManager
   : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
-
-  enum TextLocation
-  {
-    CORNER_BL,
-    CORNER_BR,
-    CORNER_TL,
-    CORNER_TR,
-    EDGE_B,
-    EDGE_R,
-    EDGE_L,
-    EDGE_T
-  };
-
-  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
-                                               CORNER_TR, EDGE_B,    EDGE_R,
-                                               EDGE_L,    EDGE_T};
 
   static vtkMRMLCornerTextDisplayableManager* New();
   vtkTypeMacro(vtkMRMLCornerTextDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
@@ -64,11 +40,10 @@ protected:
   ~vtkMRMLCornerTextDisplayableManager() override;
 
   void UnobserveMRMLScene() override;
-  void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
-  void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  /// Update Actors based on transforms in the scene
+  /// Update Actors based on changes in the scene (TODO: Clarify this
+  /// behavior)
   void UpdateFromMRML() override;
 
   void OnMRMLSceneStartClose() override;
