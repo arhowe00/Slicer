@@ -38,6 +38,22 @@ class VTK_SLICER_CORNERTEXT_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLCornerTe
 
 public:
 
+  enum TextLocation
+  {
+    CORNER_BL,
+    CORNER_BR,
+    CORNER_TL,
+    CORNER_TR,
+    EDGE_B,
+    EDGE_R,
+    EDGE_L,
+    EDGE_T
+  };
+
+  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
+                                               CORNER_TR, EDGE_B,    EDGE_R,
+                                               EDGE_L,    EDGE_T};
+
   static vtkMRMLCornerTextDisplayableManager* New();
   vtkTypeMacro(vtkMRMLCornerTextDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;

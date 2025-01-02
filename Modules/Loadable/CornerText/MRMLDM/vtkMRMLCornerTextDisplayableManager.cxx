@@ -27,7 +27,6 @@
 #include "vtkSlicerCornerTextLogic.h"
 
 // MRML includes
-#include <vtkMRMLMarkupsNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceCompositeNode.h>
@@ -48,8 +47,6 @@
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
-#include <vtk.h>
-#include <vtkPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
 #include <vtkCornerAnnotation.h>
@@ -89,8 +86,8 @@ public:
                                                CORNER_TR, EDGE_B,    EDGE_R,
                                                EDGE_L,    EDGE_T};
 
-  typedef std::map < vtkMRMLNode*, std::set< vtkMRMLTransformDisplayNode* > > TransformToDisplayCacheType;
-  ToDisplayCacheType TransformToDisplayNodes;
+  vtkInternal( vtkMRMLCornerTextDisplayableManager* external );
+  ~vtkInternal();
 
   // CornerText
   void AddNode(vtkMRMLTransformNode* displayableNode);
@@ -103,9 +100,7 @@ public:
   vtkMRMLNode* GetTextNodeFromSliceNode(TextLocation);
 
   // Display Nodes
-  void AddDisplayNode(vtkMRMLNode*, vtkMRMLTransformDisplayNode*);
   void UpdateDisplayNode(vtkMRMLDisplayNode* displayNode);
-  void UpdateDisplayNodePipeline(vtkMRMLDisplayNode*, const Pipeline*);
   void RemoveDisplayNode(vtkMRMLDisplayNode* displayNode);
 
   // Observations
@@ -215,8 +210,6 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
   }
   return;
 }
-
-#if 0
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::AddNode(vtkMRMLTransformNode* node)
@@ -348,99 +341,6 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::AddDisplayNode(vtkMRMLNod
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateDisplayNode(vtkMRMLDisplayNode* displayNode)
-{
-  // If the DisplayNode already exists, just update.
-  //   otherwise, add as new node
-
-  if (!displayNode)
-  {
-    return;
-  }
-  PipelinesCacheType::iterator it;
-  it = this->DisplayPipelines.find(displayNode);
-  if (it != this->DisplayPipelines.end())
-  {
-    this->UpdateDisplayNodePipeline(displayNode, it->second);
-  }
-  else
-  {
-    this->AddNode( vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode()) );
-  }
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateDisplayNodePipeline(vtkMRMLDisplayNode* displayNode, const Pipeline* pipeline)
-{
-  // Sets visibility, set pipeline polydata input, update color
-  //   calculate and set pipeline transforms.
-
-  if (!displayNode || !pipeline)
-  {
-    return;
-  }
-
-  // Update visibility
-  bool visible = this->IsVisible(displayNode);
-  pipeline->Actor->SetVisibility(visible);
-  if (!visible)
-  {
-    return;
-  }
-
-  vtkMRMLDisplayNode* transformDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(displayNode);
-
-  vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
-  vtkMRMLMarkupsNode* glyphPointsNode = vtkMRMLMarkupsNode::SafeDownCast(displayNode->GetGlyphPointsNode());
-  vtkSlicerLogic::GetVisualization2d(polyData, transformDisplayNode, this->SliceNode, glyphPointsNode);
-
-  pipeline->er->SetInputData(polyData);
-
-  if (polyData->GetNumberOfPoints()==0)
-  {
-    // Avoid vtkPolyDataFilter logging "No input data" errors
-    pipeline->Actor->SetVisibility(false);
-    return;
-  }
-
-  // Set PolyData 
-  vtkNew<vtkMatrix4x4> rasToXY;
-  vtkMatrix4x4::Invert(this->SliceNode->GetXYToRAS(), rasToXY.GetPointer());
-  pipeline->ToSlice->SetMatrix(rasToXY.GetPointer());
-
-  // Update pipeline actor
-  vtkActor2D* actor = vtkActor2D::SafeDownCast(pipeline->Actor);
-  vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(actor->GetMapper());
-  mapper->SetInputConnection( pipeline->er->GetOutputPort() );
-
-  // if the scalars are visible, set active scalars
-  bool scalarVisibility = false;
-  if (displayNode->GetScalarVisibility())
-  {
-    vtkColorTransferFunction* colorTransferFunction=displayNode->GetColorMap();
-    if (colorTransferFunction != nullptr && colorTransferFunction->GetSize()>0)
-    {
-      // Copy the transfer function to not share them between multiple mappers
-      vtkNew<vtkColorTransferFunction> colorTransferFunctionCopy;
-      colorTransferFunctionCopy->DeepCopy(colorTransferFunction);
-      mapper->SetLookupTable(colorTransferFunctionCopy.GetPointer());
-      mapper->SetScalarModeToUsePointData();
-      mapper->SetColorModeToMapScalars();
-      mapper->ColorByArrayComponent(const_cast<char*>(vtkSlicerLogic::GetVisualizationDisplacementMagnitudeScalarName()),0);
-      mapper->UseLookupTableScalarRangeOff();
-      mapper->SetScalarRange(displayNode->GetScalarRange());
-      scalarVisibility = true;
-    }
-  }
-  mapper->SetScalarVisibility(scalarVisibility);
-
-  actor->SetPosition(0,0);
-  vtkProperty2D* actorProperties = actor->GetProperty();
-  actorProperties->SetColor(displayNode->GetColor() );
-  actorProperties->SetLineWidth(displayNode->GetSliceIntersectionThickness() );
-}
-
-//---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::AddObservations(vtkMRMLNode* node)
 {
   vtkEventBroker* broker = vtkEventBroker::GetInstance();
@@ -517,55 +417,6 @@ void vtkMRMLCornerTextDisplayableManager::PrintSelf(ostream& os, vtkIndent inden
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "vtkMRMLCornerTextDisplayableManager: " << this->GetClassName() << "\n";
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneNodeAdded(vtkMRMLNode* node)
-{
-  if ( !node->IsA("vtkMRMLNode") )
-  {
-    return;
-  }
-
-  // Escape if the scene a scene is being closed, imported or connected
-  if (this->GetMRMLScene()->IsBatchProcessing())
-  {
-    this->SetUpdateFromMRMLRequested(true);
-    return;
-  }
-
-  this->Internal->AddNode(vtkMRMLTransformNode::SafeDownCast(node));
-  this->RequestRender();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneNodeRemoved(vtkMRMLNode* node)
-{
-  if ( node
-    && (!node->IsA("vtkMRMLNode"))
-    && (!node->IsA("vtkMRMLDisplayNode")) )
-  {
-    return;
-  }
-
-  vtkMRMLNode* transformNode = nullptr;
-  vtkMRMLDisplayNode* displayNode = nullptr;
-
-  bool modified = false;
-  if ( (transformNode = vtkMRMLNode::SafeDownCast(node)) )
-  {
-    this->Internal->RemoveNode(transformNode);
-    modified = true;
-  }
-  else if ( (displayNode = vtkMRMLDisplayNode::SafeDownCast(node)) )
-  {
-    this->Internal->RemoveDisplayNode(displayNode);
-    modified = true;
-  }
-  if (modified)
-  {
-    this->RequestRender();
-  }
 }
 
 //---------------------------------------------------------------------------
