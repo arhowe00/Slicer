@@ -157,29 +157,6 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::IsVisible(vtkMRMLDisplayN
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(vtkMRMLSliceNode* sliceNode)
-{
-  if (!sliceNode || this->SliceNode == sliceNode)
-  {
-    return;
-  }
-  this->SliceNode=sliceNode;
-  this->UpdateSliceNode();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
-{
-  // Update the Slice node transform
-
-  PipelinesCacheType::iterator it;
-  for (it = this->DisplayPipelines.begin(); it != this->DisplayPipelines.end(); ++it)
-  {
-    this->UpdateDisplayNodePipeline(it->first, it->second);
-  }
-}
-
-//---------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLCornerTextDisplayableManager::vtkInternal::
 GetTextNodeFromSliceNode(TextLocation location)
 {
@@ -205,6 +182,29 @@ GetTextNodeFromSliceNode(TextLocation location)
   }
 }
 
+//---------------------------------------------------------------------------
+void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(vtkMRMLSliceNode* sliceNode)
+{
+  if (!sliceNode || this->SliceNode == sliceNode)
+  {
+    return;
+  }
+  this->SliceNode=sliceNode;
+  this->UpdateSliceNode();
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
+{
+  qSlicerLayoutManager* layoutManager
+  // Update the Slice node annotations
+  for (vtkSlicerCornerTextLogic::TextLocation loc : vtkSlicerCornerTextLogic::locations) {
+    slicerCornerAnnotation->SetText(loc, vtkSlicerCornerTextLogic::GetTextNodeFromSliceView(
+
+  }
+}
+
+#if 0
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::AddNode(vtkMRMLTransformNode* node)
