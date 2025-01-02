@@ -49,6 +49,10 @@ public:
   vtkTypeMacro(vtkSlicerCornerTextLogic, vtkSlicerModuleLogic);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  /// CornerText Logic functions
+  static std::string GenerateCornerAnnotation(vtkMRMLSliceNode *,
+                                              vtkMRMLTextNode *);
+
 protected:
   vtkSlicerCornerTextLogic();
   ~vtkSlicerCornerTextLogic() override;
@@ -65,8 +69,10 @@ private:
   vtkSlicerCornerTextLogic(const vtkSlicerCornerTextLogic&); // Not implemented
   void operator=(const vtkSlicerCornerTextLogic&); // Not implemented
 
+  /// Parses the contents of an XMl-based text node into a vtkXMLDataElement.
+  /// The vtkXMLDataElement will be used by other functions to generate the
+  /// actual string intended to be rendered on a given slice view.
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
-  std::string GenerateCornerAnnotation(vtkMRMLSliceNode*, vtkMRMLTextNode*); 
 
 };
 

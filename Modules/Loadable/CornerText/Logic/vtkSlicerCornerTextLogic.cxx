@@ -116,12 +116,11 @@ vtkSlicerCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
   return root;
 }
 
+//---------------------------------------------------------------------------
+std::string
+vtkSlicerCornerTextLogic::GenerateCornerAnnotation(vtkMRMLSliceNode *sliceNode,
+                                                   vtkMRMLTextNode *textNode)
+{
+  return "DefaultCornerText";
 
-// //---------------------------------------------------------------------------
-// std::string vtkSlicerCornerTextLogic
-// ::GenerateCornerAnnotation(vtkMRMLSliceNode* sliceNode, vtkMRMLTextNode* textNode)
-// {
-//  vtkXMLDataElement* ele = ParseTextNode(textNode);
-// 
-// 
-// }
+}
