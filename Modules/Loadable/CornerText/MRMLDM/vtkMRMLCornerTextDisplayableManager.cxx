@@ -34,6 +34,7 @@
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLNode.h>
+#include <vtkMRMLTextNode.h>
 
 // VTK includes
 #include <vtkActor2D.h>
@@ -51,12 +52,18 @@
 #include <vtkPolyDataFilter.h>
 #include <vtkWeakPointer.h>
 #include <vtkPointLocator.h>
+#include <vtkCornerAnnotation.h>
 
 // STD includes
 #include <algorithm>
 #include <cassert>
 #include <set>
 #include <map>
+
+// Slicer includes
+#include <qSlicerApplication.h>
+#include <qSlicerLayoutManager.h>
+#include <qMRMLSliceWidget.h>
 
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLCornerTextDisplayableManager );
@@ -196,12 +203,17 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(vtkMRMLSlice
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
 {
-  qSlicerLayoutManager* layoutManager
-  // Update the Slice node annotations
-  for (vtkSlicerCornerTextLogic::TextLocation loc : vtkSlicerCornerTextLogic::locations) {
-    slicerCornerAnnotation->SetText(loc, vtkSlicerCornerTextLogic::GetTextNodeFromSliceView(
+  QString sliceViewName = this->SliceNode->GetLayoutName();
+  vtkCornerAnnotation* cA = qSlicerApplication::application()->layoutManager()->sliceWidget(sliceViewName)->overlayCornerAnnotation();
 
+  for (TextLocation loc : locations)
+  {
+    const std::string& generatedText =
+      vtkSlicerCornerTextLogic::GenerateCornerAnnotation(this->SliceNode,
+          vtkMRMLTextNode::SafeDownCast(this->GetTextNodeFromSliceNode(loc)));
+    cA->SetText(loc, generatedText.c_str());
   }
+  return;
 }
 
 #if 0
