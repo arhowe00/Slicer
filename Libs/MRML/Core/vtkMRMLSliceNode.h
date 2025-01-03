@@ -567,15 +567,70 @@ public:
 
   ///@{
   /// Node reference role for top-left text that is used in the slice view
-  const char* GetTopLeftTextNodeReferenceRole() { return "topLeftText"; }
-  const char* GetTopLeftTextNodeReferenceMRMLAttributeName() { return "topLeftTextRef"; };
+  const char* GetBottomLeftTextNodeReferenceRole() { return "bottomLeftText"; }
+  const char* GetBottomLeftTextNodeReferenceMRMLAttributeName() { return "bottomLeftTextRef"; }
 
-  /// Get/set the slab reconstruction visibility.
+  const char* GetBottomRightTextNodeReferenceRole() { return "bottomRightText"; }
+  const char* GetBottomRightTextNodeReferenceMRMLAttributeName() { return "bottomRightTextRef"; }
+
+  const char* GetTopLeftTextNodeReferenceRole() { return "bottomRightText"; }
+  const char* GetTopLeftTextNodeReferenceMRMLAttributeName() { return "bottomRightTextRef"; }
+
+  const char* GetTopRightTextNodeReferenceRole() { return "topRightText"; }
+  const char* GetTopRightTextNodeReferenceMRMLAttributeName() { return "topRightTextRef"; }
+
+  const char* GetBottomEdgeTextNodeReferenceRole() { return "bottomEdgeText"; }
+  const char* GetBottomEdgeTextNodeReferenceMRMLAttributeName() { return "bottomEdgeTextRef"; }
+
+  const char* GetRightEdgeTextNodeReferenceRole() { return "rightEdgeText"; }
+  const char* GetRightEdgeTextNodeReferenceMRMLAttributeName() { return "rightEdgeTextRef"; }
+
+  const char* GetLeftEdgeTextNodeReferenceRole() { return "leftEdgeText"; }
+  const char* GetLeftEdgeTextNodeReferenceMRMLAttributeName() { return "leftEdgeTextRef"; }
+
+  const char* GetTopEdgeTextNodeReferenceRole() { return "topEdgeText"; }
+  const char* GetTopEdgeTextNodeReferenceMRMLAttributeName() { return "topEdgeTextRef"; }
+
+  vtkGetMacro(BottomLeftTextEnabled, bool);
+  vtkSetMacro(BottomLeftTextEnabled, bool);
+  vtkBooleanMacro(BottomLeftTextEnabled, bool);
+
+  vtkGetMacro(BottomRightTextEnabled, bool);
+  vtkSetMacro(BottomRightTextEnabled, bool);
+  vtkBooleanMacro(BottomRightTextEnabled, bool);
+
   vtkGetMacro(TopLeftTextEnabled, bool);
   vtkSetMacro(TopLeftTextEnabled, bool);
   vtkBooleanMacro(TopLeftTextEnabled, bool);
 
-  void SetAndObserverTopLeftTextNode(vtkMRMLNode* textNode);
+  vtkGetMacro(TopRightTextEnabled, bool);
+  vtkSetMacro(TopRightTextEnabled, bool);
+  vtkBooleanMacro(TopRightTextEnabled, bool);
+
+  vtkGetMacro(BottomEdgeTextEnabled, bool);
+  vtkSetMacro(BottomEdgeTextEnabled, bool);
+  vtkBooleanMacro(BottomEdgeTextEnabled, bool);
+
+  vtkGetMacro(RightEdgeTextEnabled, bool);
+  vtkSetMacro(RightEdgeTextEnabled, bool);
+  vtkBooleanMacro(RightEdgeTextEnabled, bool);
+
+  vtkGetMacro(LeftEdgeTextEnabled, bool);
+  vtkSetMacro(LeftEdgeTextEnabled, bool);
+  vtkBooleanMacro(LeftEdgeTextEnabled, bool);
+
+  vtkGetMacro(TopEdgeTextEnabled, bool);
+  vtkSetMacro(TopEdgeTextEnabled, bool);
+  vtkBooleanMacro(TopEdgeTextEnabled, bool);
+
+  void SetAndObserveBottomLeftTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveBottomRightTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveTopLeftTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveTopRightTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveBottomEdgeTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveRightEdgeTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveLeftEdgeTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveTopEdgeTextNode(vtkMRMLNode* textNode);
   ///}@
 
 protected:
@@ -644,7 +699,14 @@ protected:
 
   vtkSmartPointer<vtkPlane> ImplicitFunction;
 
+  bool BottomLeftTextEnabled{false};
+  bool BottomRightTextEnabled{false};
   bool TopLeftTextEnabled{false};
+  bool TopRightTextEnabled{false};
+  bool BottomEdgeTextEnabled{false};
+  bool RightEdgeTextEnabled{false};
+  bool LeftEdgeTextEnabled{false};
+  bool TopEdgeTextEnabled{false};
 };
 
 //----------------------------------------------------------------------------
