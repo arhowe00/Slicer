@@ -72,6 +72,7 @@ public:
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode *sliceNode);
   void UpdateSliceNode();
+  bool GetTextNodeEnabledForSliceNode(TextLocation);
   vtkMRMLNode *GetTextNodeFromSliceNode(TextLocation);
 
 private:
@@ -123,6 +124,32 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNodeFromSliceNode(
 }
 
 //---------------------------------------------------------------------------
+bool vtkMRMLCornerTextDisplayableManager::vtkInternal::
+    GetTextNodeEnabledForSliceNode(TextLocation location) {
+  switch (location) 
+  {
+  case CORNER_BL:
+    return this->SliceNode->GetBottomLeftTextEnabled();
+  case CORNER_BR:
+    return this->SliceNode->GetBottomRightTextEnabled();
+  case CORNER_TL:
+    return this->SliceNode->GetTopLeftTextEnabled();
+  case CORNER_TR:
+    return this->SliceNode->GetTopRightTextEnabled();
+  case EDGE_B:
+    return this->SliceNode->GetBottomEdgeTextEnabled();
+  case EDGE_R:
+    return this->SliceNode->GetRightEdgeTextEnabled();
+  case EDGE_L:
+    return this->SliceNode->GetLeftEdgeTextEnabled();
+  case EDGE_T:
+    return this->SliceNode->GetTopEdgeTextEnabled();
+  default:
+    return false;
+  }
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(
     vtkMRMLSliceNode *sliceNode)
 {
@@ -145,11 +172,13 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
 
   for (TextLocation loc : locations) 
   {
-    const std::string &generatedText =
-        vtkSlicerCornerTextLogic::GenerateCornerAnnotation(
-            this->SliceNode,
-            vtkMRMLTextNode::SafeDownCast(this->GetTextNodeFromSliceNode(loc)));
-    cA->SetText(loc, generatedText.c_str());
+    if (this->GetTextNodeEnabledForSliceNode(loc))
+    {
+      const std::string &generatedText = vtkSlicerCornerTextLogic::GenerateCornerAnnotation(
+              this->SliceNode,
+              vtkMRMLTextNode::SafeDownCast(this->GetTextNodeFromSliceNode(loc)));
+      cA->SetText(loc, generatedText.c_str());
+    }
   }
   return;
 }
