@@ -72,8 +72,8 @@ public:
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode *sliceNode);
   void UpdateSliceNode();
-  bool GetTextNodeEnabledForSliceNode(TextLocation);
-  vtkMRMLNode *GetTextNodeFromSliceNode(TextLocation);
+  bool GetLocationEnabled(TextLocation);
+  vtkMRMLNode *GetTextNode(TextLocation);
 
 private:
   vtkMRMLCornerTextDisplayableManager *External;
@@ -97,7 +97,7 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::~vtkInternal()
 
 //---------------------------------------------------------------------------
 vtkMRMLNode *
-vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNodeFromSliceNode(
+vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode(
     TextLocation location)
 {
   switch (location) 
@@ -125,7 +125,7 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNodeFromSliceNode(
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCornerTextDisplayableManager::vtkInternal::
-    GetTextNodeEnabledForSliceNode(TextLocation location) {
+    GetLocationEnabled(TextLocation location) {
   switch (location) 
   {
   case CORNER_BL:
@@ -172,11 +172,11 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
 
   for (TextLocation loc : locations) 
   {
-    if (this->GetTextNodeEnabledForSliceNode(loc))
+    if (this->GetLocationEnabled(loc))
     {
       const std::string &generatedText = vtkSlicerCornerTextLogic::GenerateCornerAnnotation(
               this->SliceNode,
-              vtkMRMLTextNode::SafeDownCast(this->GetTextNodeFromSliceNode(loc)));
+              vtkMRMLTextNode::SafeDownCast(this->GetTextNode(loc)));
       cA->SetText(loc, generatedText.c_str());
     }
   }
