@@ -8,8 +8,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
   )
 
 set(${KIT}_SRCS
-  vtkSlicer${MODULE_NAME}Logic.cxx
-  vtkSlicer${MODULE_NAME}Logic.h
+  vtkMRMLDefault${MODULE_NAME}TagValueProvider.cxx
+  vtkMRMLDefault${MODULE_NAME}TagValueProvider.h
   )
 
 set(${KIT}_TARGET_LIBRARIES

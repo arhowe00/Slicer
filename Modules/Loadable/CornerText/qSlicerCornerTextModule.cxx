@@ -17,9 +17,6 @@
 
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
-// CornerText Logic includes
-#include <vtkSlicerCornerTextLogic.h>
-
 // CornerText includes
 #include "qSlicerCornerTextModule.h"
 #include "qSlicerCornerTextModuleWidget.h"
@@ -111,10 +108,4 @@ qSlicerAbstractModuleRepresentation* qSlicerCornerTextModule
 ::createWidgetRepresentation()
 {
   return new qSlicerCornerTextModuleWidget;
-}
-
-//-----------------------------------------------------------------------------
-vtkMRMLAbstractLogic* qSlicerCornerTextModule::createLogic()
-{
-  return vtkSlicerCornerTextLogic::New();
 }

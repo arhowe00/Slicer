@@ -18,6 +18,7 @@
 // MRML includes
 #include "vtkMRMLAbstractViewNode.h"
 class vtkMRMLVolumeNode;
+class vtkMRMLTextNode;
 
 // VTK includes
 class vtkImplicitFunction;
@@ -567,29 +568,8 @@ public:
 
   ///@{
   /// Node reference role for top-left text that is used in the slice view
-  const char* GetBottomLeftTextNodeReferenceRole() { return "bottomLeftText"; }
-  const char* GetBottomLeftTextNodeReferenceMRMLAttributeName() { return "bottomLeftTextRef"; }
-
-  const char* GetBottomRightTextNodeReferenceRole() { return "bottomRightText"; }
-  const char* GetBottomRightTextNodeReferenceMRMLAttributeName() { return "bottomRightTextRef"; }
-
-  const char* GetTopLeftTextNodeReferenceRole() { return "bottomRightText"; }
-  const char* GetTopLeftTextNodeReferenceMRMLAttributeName() { return "bottomRightTextRef"; }
-
-  const char* GetTopRightTextNodeReferenceRole() { return "topRightText"; }
-  const char* GetTopRightTextNodeReferenceMRMLAttributeName() { return "topRightTextRef"; }
-
-  const char* GetBottomEdgeTextNodeReferenceRole() { return "bottomEdgeText"; }
-  const char* GetBottomEdgeTextNodeReferenceMRMLAttributeName() { return "bottomEdgeTextRef"; }
-
-  const char* GetRightEdgeTextNodeReferenceRole() { return "rightEdgeText"; }
-  const char* GetRightEdgeTextNodeReferenceMRMLAttributeName() { return "rightEdgeTextRef"; }
-
-  const char* GetLeftEdgeTextNodeReferenceRole() { return "leftEdgeText"; }
-  const char* GetLeftEdgeTextNodeReferenceMRMLAttributeName() { return "leftEdgeTextRef"; }
-
-  const char* GetTopEdgeTextNodeReferenceRole() { return "topEdgeText"; }
-  const char* GetTopEdgeTextNodeReferenceMRMLAttributeName() { return "topEdgeTextRef"; }
+  const char* GetCornerAnnotationsTextNodeReferenceRole() { return "cornerText"; }
+  const char* GetCornerAnnotationsTextNodeReferenceMRMLAttributeName() { return "cornerTextRef"; }
 
   vtkGetMacro(BottomLeftTextEnabled, bool);
   vtkSetMacro(BottomLeftTextEnabled, bool);
@@ -623,14 +603,8 @@ public:
   vtkSetMacro(TopEdgeTextEnabled, bool);
   vtkBooleanMacro(TopEdgeTextEnabled, bool);
 
-  void SetAndObserveBottomLeftTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveBottomRightTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveTopLeftTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveTopRightTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveBottomEdgeTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveRightEdgeTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveLeftEdgeTextNode(vtkMRMLNode* textNode);
-  void SetAndObserveTopEdgeTextNode(vtkMRMLNode* textNode);
+  void SetAndObserveCornerAnnotationsTextNode(vtkMRMLNode* textNode);
+  vtkMRMLTextNode* GetCornerAnnotationsTextNode();
   ///}@
 
 protected:

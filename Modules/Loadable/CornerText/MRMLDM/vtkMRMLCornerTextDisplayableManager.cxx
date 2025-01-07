@@ -15,17 +15,20 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLCornerTextDisplayableManager.h"
-#include "vtkSlicerCornerTextLogic.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
 #include <vtkMRMLTextNode.h>
+#include <vtkMRMLCornerTextLogic.h>
+#include <vtkMRMLApplicationLogic.h>
 
 // VTK includes
+#include <vtkSetGet.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCornerAnnotation.h>
+#include <vtkTextProperty.h>
 #include <vtkEventBroker.h>
 #include <vtkRenderer.h>
 
@@ -46,21 +49,6 @@ vtkStandardNewMacro(vtkMRMLCornerTextDisplayableManager);
 //---------------------------------------------------------------------------
 class vtkMRMLCornerTextDisplayableManager::vtkInternal {
 public:
-  enum TextLocation {
-    CORNER_BL,
-    CORNER_BR,
-    CORNER_TL,
-    CORNER_TR,
-    EDGE_B,
-    EDGE_R,
-    EDGE_L,
-    EDGE_T
-  };
-
-  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
-                                               CORNER_TR, EDGE_B,    EDGE_R,
-                                               EDGE_L,    EDGE_T};
-
   vtkInternal(vtkMRMLCornerTextDisplayableManager *external);
   ~vtkInternal();
 
@@ -72,8 +60,8 @@ public:
   // Slice Node
   void SetSliceNode(vtkMRMLSliceNode *sliceNode);
   void UpdateSliceNode();
-  bool GetLocationEnabled(TextLocation);
-  vtkMRMLNode *GetTextNode(TextLocation);
+  bool GetLocationEnabled(vtkMRMLCornerTextLogic::TextLocation);
+  vtkMRMLTextNode *GetTextNode();
 
 private:
   vtkMRMLCornerTextDisplayableManager *External;
@@ -96,53 +84,33 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::~vtkInternal()
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLNode *
-vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode(
-    TextLocation location)
+vtkMRMLTextNode *
+vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode()
 {
-  switch (location) 
-  {
-  case CORNER_BL:
-    return this->SliceNode->GetNodeReference("bottomLeftText");
-  case CORNER_BR:
-    return this->SliceNode->GetNodeReference("bottomRightText");
-  case CORNER_TL:
-    return this->SliceNode->GetNodeReference("topLeftText");
-  case CORNER_TR:
-    return this->SliceNode->GetNodeReference("topRightText");
-  case EDGE_B:
-    return this->SliceNode->GetNodeReference("bottomEdgeText");
-  case EDGE_R:
-    return this->SliceNode->GetNodeReference("rightEdgeText");
-  case EDGE_L:
-    return this->SliceNode->GetNodeReference("leftEdgeText");
-  case EDGE_T:
-    return this->SliceNode->GetNodeReference("topEdgeText");
-  default:
-    return nullptr;
-  }
+  return this->SliceNode->GetCornerAnnotationsTextNode();
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLCornerTextDisplayableManager::vtkInternal::
-    GetLocationEnabled(TextLocation location) {
+bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
+    vtkMRMLCornerTextLogic::TextLocation location)
+{
   switch (location) 
   {
-  case CORNER_BL:
+  case vtkMRMLCornerTextLogic::CORNER_BL:
     return this->SliceNode->GetBottomLeftTextEnabled();
-  case CORNER_BR:
+  case vtkMRMLCornerTextLogic::CORNER_BR:
     return this->SliceNode->GetBottomRightTextEnabled();
-  case CORNER_TL:
+  case vtkMRMLCornerTextLogic::CORNER_TL:
     return this->SliceNode->GetTopLeftTextEnabled();
-  case CORNER_TR:
+  case vtkMRMLCornerTextLogic::CORNER_TR:
     return this->SliceNode->GetTopRightTextEnabled();
-  case EDGE_B:
+  case vtkMRMLCornerTextLogic::EDGE_B:
     return this->SliceNode->GetBottomEdgeTextEnabled();
-  case EDGE_R:
+  case vtkMRMLCornerTextLogic::EDGE_R:
     return this->SliceNode->GetRightEdgeTextEnabled();
-  case EDGE_L:
+  case vtkMRMLCornerTextLogic::EDGE_L:
     return this->SliceNode->GetLeftEdgeTextEnabled();
-  case EDGE_T:
+  case vtkMRMLCornerTextLogic::EDGE_T:
     return this->SliceNode->GetTopEdgeTextEnabled();
   default:
     return false;
@@ -164,20 +132,40 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode() 
 {
+  // Get vtkMRMLCornerTextLogic
+  vtkMRMLCornerTextLogic *cornerTextLogic =
+      vtkMRMLCornerTextLogic::SafeDownCast(
+          this->External->GetMRMLApplicationLogic()->GetModuleLogic(
+              "CornerText"));
+
+  if (!cornerTextLogic)
+  {
+    vtkErrorWithObjectMacro(
+        this->External, "vtkMRMLCornerTextDisplayableManager::vtkInternal::"
+                        "UpdateSliceNode() failed: invalid CornerText logic.");
+    return;
+  }
+
+  // Get vtkCornerAnnotation from slice widget
   QString sliceViewName = this->SliceNode->GetLayoutName();
   vtkCornerAnnotation *cA = qSlicerApplication::application()
                                 ->layoutManager()
                                 ->sliceWidget(sliceViewName)
                                 ->overlayCornerAnnotation();
 
-  for (TextLocation loc : locations) 
+  const std::array<vtkMRMLCornerTextLogic::Annotation, 8> &generatedText =
+      cornerTextLogic->GenerateAnnotations(
+          this->SliceNode,
+          this->GetTextNode());
+  for (vtkMRMLCornerTextLogic::TextLocation loc :
+       vtkMRMLCornerTextLogic::locations)
   {
     if (this->GetLocationEnabled(loc))
     {
-      const std::string &generatedText = vtkSlicerCornerTextLogic::GenerateCornerAnnotation(
-              this->SliceNode,
-              vtkMRMLTextNode::SafeDownCast(this->GetTextNode(loc)));
-      cA->SetText(loc, generatedText.c_str());
+      cA->SetText(loc, generatedText[loc].text.c_str());
+      cA->GetTextProperty()->SetFontSize(generatedText[loc].fontSize);
+      cA->GetTextProperty()->SetFontFamilyAsString(
+          generatedText[loc].fontFamily.c_str());
     }
   }
   return;

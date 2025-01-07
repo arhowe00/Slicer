@@ -20,14 +20,17 @@
 
 // MRMLLogic includes
 #include "vtkMRMLLayoutLogic.h"
+#include "vtkMRMLCornerTextLogic.h"
 
 // MRML includes
 #include "vtkMRMLColors.h"
+#include "vtkMRMLCornerTextLogic.h"
 #include "vtkMRMLLayoutNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLViewNode.h"
 #include "vtkMRMLTableViewNode.h"
+#include "vtkMRMLTextNode.h"
 #include "vtkMRMLPlotViewNode.h"
 
 // VTK includes
@@ -1282,6 +1285,7 @@ void vtkMRMLLayoutLogic::UpdateFromLayoutNode()
   this->UpdateCompareViewLayoutDefinitions();
   this->CreateMissingViews();
   this->UpdateViewCollectionsFromLayout();
+  this->UpdateViewCornerAnnotations();
 }
 
 //----------------------------------------------------------------------------
@@ -1948,6 +1952,26 @@ void vtkMRMLLayoutLogic::UpdateViewCollectionsFromLayout()
   }
   this->ViewNodes->Delete();
   this->ViewNodes = this->GetViewsFromLayout(this->LayoutNode->GetLayoutRootElement());
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLLayoutLogic::UpdateViewCornerAnnotations()
+{
+  vtkCollectionSimpleIterator viewsIt;
+  this->ViewNodes->InitTraversal(viewsIt);
+
+  vtkObject* item = nullptr;
+  while ((item = this->ViewNodes->GetNextItemAsObject(viewsIt)) != nullptr)
+  {
+      vtkMRMLSliceNode* view = vtkMRMLSliceNode::SafeDownCast(item);
+      // TODO: Why is view sometimes returning nullptr here?
+      if (view != nullptr)
+        view->SetAndObserveCornerAnnotationsTextNode(
+            vtkMRMLCornerTextLogic::GetCornerAnnotations(
+                this->GetMRMLScene(), this->GetLayoutNode()->GetViewArrangement(),
+                view->GetName()));
+  }
+  return;
 }
 
 //----------------------------------------------------------------------------

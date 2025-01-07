@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLTextNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLVolumeNode.h"
 
@@ -2129,49 +2130,13 @@ vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveBottomLeftTextNode(vtkMRMLNode* textNode)
+void vtkMRMLSliceNode::SetAndObserveCornerAnnotationsTextNode(vtkMRMLNode* textNode)
 {
-  this->SetAndObserveNodeReferenceID(this->GetBottomLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+  this->SetAndObserveNodeReferenceID(this->GetCornerAnnotationsTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveBottomRightTextNode(vtkMRMLNode* textNode)
+vtkMRMLTextNode* vtkMRMLSliceNode::GetCornerAnnotationsTextNode()
 {
-  this->SetAndObserveNodeReferenceID(this->GetBottomRightTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveTopLeftTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetTopLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveTopRightTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetTopRightTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveBottomEdgeTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetBottomEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveRightEdgeTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetRightEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveLeftEdgeTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetLeftEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
-}
-
-//-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserveTopEdgeTextNode(vtkMRMLNode* textNode)
-{
-  this->SetAndObserveNodeReferenceID(this->GetTopEdgeTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+  return vtkMRMLTextNode::SafeDownCast(this->GetNodeReference(this->GetCornerAnnotationsTextNodeReferenceRole()));
 }
