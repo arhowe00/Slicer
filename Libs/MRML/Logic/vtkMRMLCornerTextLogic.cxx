@@ -23,7 +23,7 @@
 #include "vtkMRMLSliceNode.h"
 #include "vtkMRMLTextNode.h"
 #include "vtkXMLDataParser.h"
-#include "vtkMRMLAbstractCornerTextTagValueProvider.h"
+#include "vtkMRMLAbstractAnnotationPropertyValueProvider.h"
 
 // VTK includes
 #include <string>
@@ -118,7 +118,7 @@ vtkMRMLCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCornerTextLogic::RegisterTagValueProvider(const std::string &pluginName,
-                               vtkMRMLAbstractCornerTextTagValueProvider *pluginProvider)
+                               vtkMRMLAbstractAnnotationPropertyValueProvider *pluginProvider)
 {
   if (registeredProviders.find(pluginName) == registeredProviders.end())
   {

@@ -15,8 +15,8 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLAbstractCornerTextTagValueProvider_h
-#define __vtkMRMLAbstractCornerTextTagValueProvider_h
+#ifndef __vtkMRMLAbstractAnnotationPropertyValueProvider_h
+#define __vtkMRMLAbstractAnnotationPropertyValueProvider_h
 
 // MRML includes
 class vtkMRMLSliceNode;
@@ -27,10 +27,10 @@ class vtkMRMLSliceNode;
 /// \brief Base class for CornerText tag value provider.
 ///
 /// Sub-classes must implement this interface to provide slice view annotations.
-class vtkMRMLAbstractCornerTextTagValueProvider : public vtkObject
+class vtkMRMLAbstractAnnotationPropertyValueProvider : public vtkObject
 {
 public:
-  vtkTypeMacro(vtkMRMLAbstractCornerTextTagValueProvider, vtkObject);
+  vtkTypeMacro(vtkMRMLAbstractAnnotationPropertyValueProvider, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual bool CanProvideValueForTag(const std::string& tag) = 0;
@@ -39,10 +39,10 @@ public:
   virtual std::vector<std::string> GetSupportedTags() = 0;
 
 protected:
-  vtkMRMLAbstractCornerTextTagValueProvider() = default;
-  ~vtkMRMLAbstractCornerTextTagValueProvider() override = default;
-  vtkMRMLAbstractCornerTextTagValueProvider(const vtkMRMLAbstractCornerTextTagValueProvider&) = delete;
-  void operator=(const vtkMRMLAbstractCornerTextTagValueProvider&) = delete;
+  vtkMRMLAbstractAnnotationPropertyValueProvider() = default;
+  ~vtkMRMLAbstractAnnotationPropertyValueProvider() override = default;
+  vtkMRMLAbstractAnnotationPropertyValueProvider(const vtkMRMLAbstractAnnotationPropertyValueProvider&) = delete;
+  void operator=(const vtkMRMLAbstractAnnotationPropertyValueProvider&) = delete;
 };
 
 #endif

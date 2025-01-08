@@ -32,7 +32,7 @@ class vtkMRMLAnnotationNode;
 class vtkMRMLSliceNode;
 class vtkMRMLTextNode;
 class vtkXMLDataElement;
-class vtkMRMLAbstractCornerTextTagValueProvider;
+class vtkMRMLAbstractAnnotationPropertyValueProvider;
 
 // STD includes
 #include <cstdlib>
@@ -67,7 +67,7 @@ public:
                                                const int viewArrangement,
                                                const std::string& viewName);
   bool RegisterTagValueProvider(const std::string &pluginName,
-                                vtkMRMLAbstractCornerTextTagValueProvider *);
+                                vtkMRMLAbstractAnnotationPropertyValueProvider *);
   std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
                                                 vtkMRMLTextNode *);
 
@@ -92,7 +92,7 @@ private:
   /// actual string intended to be rendered on a given slice view.
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
 
-  std::unordered_map<std::string, vtkMRMLAbstractCornerTextTagValueProvider *>
+  std::unordered_map<std::string, vtkMRMLAbstractAnnotationPropertyValueProvider *>
       registeredProviders;
 };
 

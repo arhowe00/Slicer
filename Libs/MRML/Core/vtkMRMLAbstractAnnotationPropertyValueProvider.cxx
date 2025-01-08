@@ -16,10 +16,10 @@
 ==============================================================================*/
 
 // MRMLCore includes
-#include "vtkMRMLAbstractCornerTextTagValueProvider.h"
+#include "vtkMRMLAbstractAnnotationPropertyValueProvider.h"
 
 //----------------------------------------------------------------------------
-void vtkMRMLAbstractCornerTextTagValueProvider::PrintSelf(ostream& os, vtkIndent indent)
+void vtkMRMLAbstractAnnotationPropertyValueProvider::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
