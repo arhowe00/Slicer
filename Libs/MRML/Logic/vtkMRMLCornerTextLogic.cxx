@@ -286,11 +286,16 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
         if (provider->CanProvideValueForTag(propertyName))
           propertyValue = provider->GetValueForTag(propertyName, sliceNode);
 
-      if (propertyName != "" && propertyValue == "")
+      const bool valueNotProvided = propertyName != "" && propertyValue == "";
+
+      if (valueNotProvided)
+      {
+        propertyValue = "Unregistered Property";
         vtkWarningWithObjectMacro(
             textNode, "<" + std::string(cornerOrEdge->GetName()) +
                           " position=" + position +
                           "> had no property value for " + propertyName + ".");
+      }
 
       if (property->GetAttribute("prefix"))
         prefix = property->GetAttribute("prefix");
