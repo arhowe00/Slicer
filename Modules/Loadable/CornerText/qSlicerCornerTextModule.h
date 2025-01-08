@@ -23,6 +23,7 @@
 
 // CornerText includes
 #include "qSlicerCornerTextModuleExport.h"
+#include "vtkMRMLAbstractLogic.h"
 
 class qSlicerCornerTextModulePrivate;
 
@@ -59,7 +60,7 @@ protected:
   qSlicerAbstractModuleRepresentation * createWidgetRepresentation() override;
 
   /// Create and return the logic associated to this module
-  vtkMRMLAbstractLogic* createLogic() override;
+  vtkMRMLAbstractLogic* createLogic() override { return nullptr; };
 
 protected:
   QScopedPointer<qSlicerCornerTextModulePrivate> d_ptr;

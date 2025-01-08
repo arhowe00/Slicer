@@ -5,7 +5,7 @@ set(MODULE_NAME CornerText)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
+#add_subdirectory(Logic)
 add_subdirectory(MRMLDM)
 add_subdirectory(Widgets)
 
@@ -14,8 +14,8 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 # Current_{source,binary} and Slicer_{Libs,Base} already included
 set(MODULE_INCLUDE_DIRECTORIES
-  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-  ${CMAKE_CURRENT_BINARY_DIR}/Logic
+  #${CMAKE_CURRENT_SOURCE_DIR}/Logic
+  #${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   )
@@ -38,7 +38,7 @@ set(MODULE_UI_SRCS
 
 set(MODULE_TARGET_LIBRARIES
   vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager
-  vtkSlicer${MODULE_NAME}ModuleLogic
+  #vtkSlicer${MODULE_NAME}ModuleLogic
   qSlicer${MODULE_NAME}ModuleWidgets
   )
 

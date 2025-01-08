@@ -5,8 +5,8 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
+  #${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
+  #${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
   ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
   ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -31,7 +31,7 @@ set(${KIT}_SRCS
 
 set(${KIT}_TARGET_LIBRARIES
   ${MRML_LIBRARIES}
-  vtkSlicerCornerTextModuleLogic
+  #vtkSlicerCornerTextModuleLogic
   )
 
 #-----------------------------------------------------------------------------
