@@ -214,12 +214,12 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     vtkXMLDataElement* cornerOrEdge = annotations->GetNestedElement(idx);
 
     const std::string tagName = std::string(cornerOrEdge->GetName());
-    if (std::string(cornerOrEdge->GetName()) != "corner" ||
+    if (std::string(cornerOrEdge->GetName()) != "corner" &&
         std::string(cornerOrEdge->GetName()) != "edge")
     {
       vtkErrorWithObjectMacro(
           textNode,
-          "<annotations> tag must be nested with <corner> or <edge> tag.");
+          "<annotations> tag must be nested with <corner> or <edge> tags.");
       return cornerAnnotations;
     }
     if (!cornerOrEdge->GetAttribute("position"))
