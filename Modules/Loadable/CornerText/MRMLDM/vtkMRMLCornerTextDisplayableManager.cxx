@@ -134,9 +134,7 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
 {
   // Get vtkMRMLCornerTextLogic
   vtkMRMLCornerTextLogic *cornerTextLogic =
-      vtkMRMLCornerTextLogic::SafeDownCast(
-          this->External->GetMRMLApplicationLogic()->GetModuleLogic(
-              "CornerText"));
+      this->External->GetMRMLApplicationLogic()->GetCornerTextLogic();
 
   if (!cornerTextLogic)
   {
