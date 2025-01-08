@@ -164,13 +164,11 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
 }
 
 //---------------------------------------------------------------------------
-std::array<vtkMRMLCornerTextLogic::Annotation, 8>
+std::array<std::string, 8>
 vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
                                               vtkMRMLTextNode *textNode)
 {
-  std::array<vtkMRMLCornerTextLogic::Annotation, 8> cornerAnnotations{};
-  std::string fontFamily = "Times";
-  std::string fontSize = "14";
+  std::array<std::string, 8> cornerAnnotations{};
 
   if (!sliceNode || !textNode)
   {
@@ -188,10 +186,6 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     vtkErrorWithObjectMacro(textNode, "Could not find <annotations> tag.");
     return cornerAnnotations;
   }
-  if (annotations->GetAttribute("fontFamily"))
-    fontFamily = annotations->GetAttribute("fontFamily");
-  if (annotations->GetAttribute("fontSize"))
-    fontSize = annotations->GetAttribute("fontSize");
 
   // Parse <corner>/<edge> elements within <annotations>
 
@@ -218,10 +212,6 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
   for (int idx = 0; idx < annotations->GetNumberOfNestedElements(); ++idx)
   {
     vtkXMLDataElement* cornerOrEdge = annotations->GetNestedElement(idx);
-    if (cornerOrEdge->GetAttribute("fontFamily"))
-      std::string fontFamily = cornerOrEdge->GetAttribute("fontFamily");
-    if (cornerOrEdge->GetAttribute("fontSize"))
-      std::string fontSize = cornerOrEdge->GetAttribute("fontSize");
 
     const std::string tagName = std::string(cornerOrEdge->GetName());
     if (std::string(cornerOrEdge->GetName()) != "corner" ||
@@ -312,8 +302,8 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
     // once each property has been parsed, the annotation for that position
     // is fully specified
-    //
-    cornerAnnotations[loc] = { text, fontFamily, std::stoi(fontSize) }; 
+
+    cornerAnnotations[loc] = text; 
   }
 
   return cornerAnnotations;

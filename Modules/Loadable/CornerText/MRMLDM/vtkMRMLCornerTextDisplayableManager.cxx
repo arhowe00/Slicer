@@ -153,7 +153,7 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
                                 ->sliceWidget(sliceViewName)
                                 ->overlayCornerAnnotation();
 
-  const std::array<vtkMRMLCornerTextLogic::Annotation, 8> &generatedText =
+  const std::array<std::string, 8> &generatedText =
       cornerTextLogic->GenerateAnnotations(
           this->SliceNode,
           this->GetTextNode());
@@ -162,10 +162,9 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
   {
     if (this->GetLocationEnabled(loc))
     {
-      cA->SetText(loc, generatedText[loc].text.c_str());
-      cA->GetTextProperty()->SetFontSize(generatedText[loc].fontSize);
-      cA->GetTextProperty()->SetFontFamilyAsString(
-          generatedText[loc].fontFamily.c_str());
+      cA->SetText(loc, generatedText[loc].c_str());
+      cA->GetTextProperty()->SetFontSize(14);
+      cA->GetTextProperty()->SetFontFamilyToTimes();
     }
   }
   return;

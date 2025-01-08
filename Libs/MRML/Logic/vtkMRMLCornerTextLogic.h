@@ -57,12 +57,6 @@ public:
   static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
                                                CORNER_TR, EDGE_B,    EDGE_R,
                                                EDGE_L,    EDGE_T};
-  struct Annotation {
-    std::string text;
-    std::string fontFamily;
-    int fontSize;
-  };
-
   /// The Usual vtk class functions
   static vtkMRMLCornerTextLogic *New();
   vtkTypeMacro(vtkMRMLCornerTextLogic, vtkMRMLAbstractLogic);
@@ -74,7 +68,7 @@ public:
                                                const std::string& viewName);
   bool RegisterTagValueProvider(const std::string &pluginName,
                                 vtkMRMLAbstractCornerTextTagValueProvider *);
-  std::array<Annotation, 8> GenerateAnnotations(vtkMRMLSliceNode *,
+  std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
                                                 vtkMRMLTextNode *);
 
 protected:
