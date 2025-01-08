@@ -290,11 +290,11 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
       if (valueNotProvided)
       {
-        propertyValue = "Unregistered Property";
         vtkWarningWithObjectMacro(
             textNode, "<" + std::string(cornerOrEdge->GetName()) +
                           " position=" + position +
                           "> had no property value for " + propertyName + ".");
+        propertyValue = "Unregistered Property: \"" + propertyName + "\"";
       }
 
       if (property->GetAttribute("prefix"))
@@ -308,7 +308,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     // once each property has been parsed, the annotation for that position
     // is fully specified
 
-    cornerAnnotations[loc] = text; 
+    cornerAnnotations[loc] += text; 
   }
 
   return cornerAnnotations;

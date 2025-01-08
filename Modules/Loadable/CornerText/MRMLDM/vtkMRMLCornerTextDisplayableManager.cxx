@@ -151,14 +151,15 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
                                 ->sliceWidget(sliceViewName)
                                 ->overlayCornerAnnotation();
 
-  const std::array<std::string, 8> &generatedText =
+  const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
           this->SliceNode,
           this->GetTextNode());
   for (vtkMRMLCornerTextLogic::TextLocation loc :
        vtkMRMLCornerTextLogic::locations)
   {
-    if (this->GetLocationEnabled(loc))
+    // TODO: add functionality to enabling/disabling annotation locations
+    if (true || this->GetLocationEnabled(loc))
     {
       cA->SetText(loc, generatedText[loc].c_str());
       cA->GetTextProperty()->SetFontSize(14);
