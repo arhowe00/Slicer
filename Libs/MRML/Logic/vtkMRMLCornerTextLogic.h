@@ -66,7 +66,7 @@ public:
   static vtkMRMLTextNode *GetCornerAnnotations(vtkMRMLScene *,
                                                const int viewArrangement,
                                                const std::string& viewName);
-  bool RegisterTagValueProvider(const std::string &pluginName,
+  bool RegisterPropertyValueProvider(const std::string &pluginName,
                                 vtkMRMLAbstractAnnotationPropertyValueProvider *);
   std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
                                                 vtkMRMLTextNode *);

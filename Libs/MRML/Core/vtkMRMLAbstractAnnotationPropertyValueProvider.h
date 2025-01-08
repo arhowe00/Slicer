@@ -24,7 +24,7 @@ class vtkMRMLSliceNode;
 // VTK includes
 #include <vtkObject.h>
 
-/// \brief Base class for CornerText tag value provider.
+/// \brief Base class for Annotation property value provider.
 ///
 /// Sub-classes must implement this interface to provide slice view annotations.
 class vtkMRMLAbstractAnnotationPropertyValueProvider : public vtkObject
@@ -33,10 +33,10 @@ public:
   vtkTypeMacro(vtkMRMLAbstractAnnotationPropertyValueProvider, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual bool CanProvideValueForTag(const std::string& tag) = 0;
-  virtual std::string GetValueForTag(const std::string& tag,
+  virtual bool CanProvideValueForProperty(const std::string& property) = 0;
+  virtual std::string GetValueForProperty(const std::string& property,
                                      vtkMRMLSliceNode *sliceNode) = 0;
-  virtual std::vector<std::string> GetSupportedTags() = 0;
+  virtual std::vector<std::string> GetSupportedProperties() = 0;
 
 protected:
   vtkMRMLAbstractAnnotationPropertyValueProvider() = default;

@@ -104,8 +104,6 @@ vtkMRMLCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
   vtkXMLDataElement *root = parser->GetRootElement();
   if (root == nullptr) 
   {
-    // this should not occur because we wrapped with a root tag. However we
-    // should consider a check if the node had a root tag already.
     vtkErrorWithObjectMacro(parser, "vtkMRMLCornerTextLogic::ParseTextNode: failed to parse layout description");
     return nullptr;
   }
@@ -117,7 +115,7 @@ vtkMRMLCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLCornerTextLogic::RegisterTagValueProvider(const std::string &pluginName,
+bool vtkMRMLCornerTextLogic::RegisterPropertyValueProvider(const std::string &pluginName,
                                vtkMRMLAbstractAnnotationPropertyValueProvider *pluginProvider)
 {
   if (registeredProviders.find(pluginName) == registeredProviders.end())
@@ -283,8 +281,8 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
       // we have to check if the name is registered by a plugin
       for (const auto [plugin, provider] : registeredProviders)
-        if (provider->CanProvideValueForTag(propertyName))
-          propertyValue = provider->GetValueForTag(propertyName, sliceNode);
+        if (provider->CanProvideValueForProperty(propertyName))
+          propertyValue = provider->GetValueForProperty(propertyName, sliceNode);
 
       const bool valueNotProvided = propertyName != "" && propertyValue == "";
 
