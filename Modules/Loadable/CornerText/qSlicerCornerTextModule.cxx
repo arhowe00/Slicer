@@ -17,9 +17,15 @@
 
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
+// Slicer includes
+#include <vtkMRMLCornerTextLogic.h>
+#include <vtkSlicerApplicationLogic.h>
+
 // CornerText includes
 #include "qSlicerCornerTextModule.h"
 #include "qSlicerCornerTextModuleWidget.h"
+#include "vtkMRMLDefaultAnnotationPropertyValueProvider.h"
+#include "vtkMRMLNode.h"
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
@@ -102,8 +108,10 @@ void qSlicerCornerTextModule::setup()
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLCornerTextDisplayableManager");
 
   // Register default annotation provider
+  vtkNew<vtkMRMLDefaultAnnotationPropertyValueProvider> provider;
+  provider->SetAppLogic(this->appLogic());
   this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider(
-      "Default", vtkMRMLDefaultAnnotationPropertyValueProvider::New());
+      "Default", provider);
 }
 
 //-----------------------------------------------------------------------------

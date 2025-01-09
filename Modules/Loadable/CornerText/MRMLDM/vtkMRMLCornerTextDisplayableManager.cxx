@@ -15,6 +15,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLCornerTextDisplayableManager.h"
+#include "vtkMRMLSliceLogic.h"
 
 // MRML includes
 #include <vtkMRMLNode.h>
@@ -58,15 +59,13 @@ public:
   void UpdateDisplayableCornerText(vtkMRMLNode *node);
 
   // Slice Node
-  void SetSliceNode(vtkMRMLSliceNode *sliceNode);
-  void UpdateSliceNode();
+  void UpdateCornerAnnotationsFromSliceNode();
   bool GetLocationEnabled(vtkMRMLCornerTextLogic::TextLocation);
   vtkMRMLTextNode *GetTextNode();
 
 private:
   vtkMRMLCornerTextDisplayableManager *External;
   bool AddingNode;
-  vtkSmartPointer<vtkMRMLSliceNode> SliceNode;
 };
 
 //---------------------------------------------------------------------------
@@ -80,14 +79,13 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::vtkInternal(
 //---------------------------------------------------------------------------
 vtkMRMLCornerTextDisplayableManager::vtkInternal::~vtkInternal()
 {
-  this->SliceNode = nullptr;
 }
 
 //---------------------------------------------------------------------------
 vtkMRMLTextNode *
 vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode()
 {
-  return this->SliceNode->GetCornerAnnotationsTextNode();
+  return this->External->GetMRMLSliceNode()->GetCornerAnnotationsTextNode();
 }
 
 //---------------------------------------------------------------------------
@@ -97,40 +95,28 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
   switch (location) 
   {
   case vtkMRMLCornerTextLogic::CORNER_BL:
-    return this->SliceNode->GetBottomLeftTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetBottomLeftTextEnabled();
   case vtkMRMLCornerTextLogic::CORNER_BR:
-    return this->SliceNode->GetBottomRightTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetBottomRightTextEnabled();
   case vtkMRMLCornerTextLogic::CORNER_TL:
-    return this->SliceNode->GetTopLeftTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetTopLeftTextEnabled();
   case vtkMRMLCornerTextLogic::CORNER_TR:
-    return this->SliceNode->GetTopRightTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetTopRightTextEnabled();
   case vtkMRMLCornerTextLogic::EDGE_B:
-    return this->SliceNode->GetBottomEdgeTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetBottomEdgeTextEnabled();
   case vtkMRMLCornerTextLogic::EDGE_R:
-    return this->SliceNode->GetRightEdgeTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetRightEdgeTextEnabled();
   case vtkMRMLCornerTextLogic::EDGE_L:
-    return this->SliceNode->GetLeftEdgeTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetLeftEdgeTextEnabled();
   case vtkMRMLCornerTextLogic::EDGE_T:
-    return this->SliceNode->GetTopEdgeTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetTopEdgeTextEnabled();
   default:
     return false;
   }
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::SetSliceNode(
-    vtkMRMLSliceNode *sliceNode)
-{
-  if (!sliceNode || this->SliceNode == sliceNode) 
-  {
-    return;
-  }
-  this->SliceNode = sliceNode;
-  this->UpdateSliceNode();
-}
-
-//---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode() 
+void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFromSliceNode() 
 {
   // Get vtkMRMLCornerTextLogic
   vtkMRMLCornerTextLogic *cornerTextLogic =
@@ -140,30 +126,34 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateSliceNode()
   {
     vtkErrorWithObjectMacro(
         this->External, "vtkMRMLCornerTextDisplayableManager::vtkInternal::"
-                        "UpdateSliceNode() failed: invalid CornerText logic.");
+                        "UpdateCornerAnnotationsFromSliceNode() failed: invalid CornerText logic.");
     return;
   }
 
   // Get vtkCornerAnnotation from slice widget
-  QString sliceViewName = this->SliceNode->GetLayoutName();
-  vtkCornerAnnotation *cA = qSlicerApplication::application()
-                                ->layoutManager()
-                                ->sliceWidget(sliceViewName)
-                                ->overlayCornerAnnotation();
+  std::string sliceViewName = this->External->GetMRMLSliceNode()->GetLayoutName();
+  // This should be specific to each viewer and not shared between viewers.
+  // DM insantiates the corner annotation and associate with the renderer.
+  // TODO: Remove dependency on qSlicerApplication
+  vtkCornerAnnotation* cornerAnnotation =
+      qSlicerApplication::application()
+          ->layoutManager()
+          ->sliceWidget(QString::fromStdString(sliceViewName))
+          ->overlayCornerAnnotation();
 
   const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
-          this->SliceNode,
+          this->External->GetMRMLSliceNode(),
           this->GetTextNode());
-  for (vtkMRMLCornerTextLogic::TextLocation loc :
+  for (vtkMRMLCornerTextLogic::TextLocation location :
        vtkMRMLCornerTextLogic::locations)
   {
     // TODO: add functionality to enabling/disabling annotation locations
-    if (true || this->GetLocationEnabled(loc))
+    if (true || this->GetLocationEnabled(location))
     {
-      cA->SetText(loc, generatedText[loc].c_str());
-      cA->GetTextProperty()->SetFontSize(14);
-      cA->GetTextProperty()->SetFontFamilyToTimes();
+      cornerAnnotation->SetText(location, generatedText[location].c_str());
+      cornerAnnotation->GetTextProperty()->SetFontSize(14);
+      cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
     }
   }
   return;
@@ -198,22 +188,26 @@ void vtkMRMLCornerTextDisplayableManager::PrintSelf(ostream &os,
 void vtkMRMLCornerTextDisplayableManager::ProcessMRMLNodesEvents(
     vtkObject *caller, unsigned long event, void *callData) 
 {
-  vtkMRMLScene *scene = this->GetMRMLScene();
+  this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
+    vtkObject* caller, unsigned long event, void *callData) 
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
 
   if (scene == nullptr || scene->IsBatchProcessing()) 
   {
     return;
   }
 
-  if (vtkMRMLSliceNode::SafeDownCast(caller)) 
+  if (vtkMRMLSliceLogic::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateSliceNode();
-    this->RequestRender();
-  } 
-  else 
-  {
-    this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode();
   }
+
+  this->Superclass::ProcessMRMLLogicsEvents(caller, event, callData);
 }
 
 //---------------------------------------------------------------------------
@@ -259,6 +253,10 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess()
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::Create() 
 {
-  this->Internal->SetSliceNode(this->GetMRMLSliceNode());
+  vtkMRMLSliceLogic *sliceLogic =
+      this->GetMRMLApplicationLogic()->GetSliceLogic(this->GetMRMLSliceNode());
+  vtkEventBroker::GetInstance()->AddObservation(
+      sliceLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+
   this->SetUpdateFromMRMLRequested(true);
 }

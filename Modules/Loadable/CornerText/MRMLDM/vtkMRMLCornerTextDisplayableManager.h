@@ -41,6 +41,7 @@ protected:
 
   void UnobserveMRMLScene() override;
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
+  void ProcessMRMLLogicsEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
   /// Update Actors based on changes in the scene (TODO: Clarify this
   /// behavior)
