@@ -15,7 +15,7 @@
 
 ==============================================================================*/
 
-// MRMLCore includes
+// MRMLLogic includes
 #include "vtkMRMLAbstractAnnotationPropertyValueProvider.h"
 
 //----------------------------------------------------------------------------

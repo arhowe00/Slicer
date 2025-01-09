@@ -92,7 +92,9 @@ private:
   /// actual string intended to be rendered on a given slice view.
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
 
-  std::unordered_map<std::string, vtkMRMLAbstractAnnotationPropertyValueProvider *>
+  std::unordered_map<
+      std::string,
+      vtkSmartPointer<vtkMRMLAbstractAnnotationPropertyValueProvider>>
       registeredProviders;
 };
 

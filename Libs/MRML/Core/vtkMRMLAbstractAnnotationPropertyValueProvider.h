@@ -24,6 +24,9 @@ class vtkMRMLSliceNode;
 // VTK includes
 #include <vtkObject.h>
 
+// STD includes
+#include <unordered_set>
+
 /// \brief Base class for Annotation property value provider.
 ///
 /// Sub-classes must implement this interface to provide slice view annotations.
@@ -36,7 +39,7 @@ public:
   virtual bool CanProvideValueForProperty(const std::string& property) = 0;
   virtual std::string GetValueForProperty(const std::string& property,
                                      vtkMRMLSliceNode *sliceNode) = 0;
-  virtual std::vector<std::string> GetSupportedProperties() = 0;
+  virtual std::unordered_set<std::string> GetSupportedProperties() = 0;
 
 protected:
   vtkMRMLAbstractAnnotationPropertyValueProvider() = default;

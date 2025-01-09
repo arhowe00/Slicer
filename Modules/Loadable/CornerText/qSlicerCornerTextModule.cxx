@@ -101,6 +101,9 @@ void qSlicerCornerTextModule::setup()
   // Register displayable managers
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLCornerTextDisplayableManager");
 
+  // Register default annotation provider
+  this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider(
+      "Default", vtkMRMLDefaultAnnotationPropertyValueProvider::New());
 }
 
 //-----------------------------------------------------------------------------
