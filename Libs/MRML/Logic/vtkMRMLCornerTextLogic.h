@@ -82,6 +82,18 @@ protected:
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
 private:
 
+  const std::unordered_map<std::string, TextLocation> positionMap =
+  {
+      {"bottom-left", CORNER_BL},
+      {"bottom-right", CORNER_BR},
+      {"top-left", CORNER_TL},
+      {"top-right", CORNER_TR},
+      {"bottom", EDGE_B},
+      {"right", EDGE_R},
+      {"left", EDGE_L},
+      {"top", EDGE_T}
+  };
+
   vtkMRMLCornerTextLogic(const vtkMRMLCornerTextLogic&); // Not implemented
   void operator=(const vtkMRMLCornerTextLogic&); // Not implemented
 

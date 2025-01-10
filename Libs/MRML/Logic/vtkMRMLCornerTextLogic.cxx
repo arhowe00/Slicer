@@ -187,18 +187,6 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
   // Parse <corner>/<edge> elements within <annotations>
 
-  const std::unordered_map<std::string, TextLocation> positionMap =
-  {
-      {"bottom-left", CORNER_BL},
-      {"bottom-right", CORNER_BR},
-      {"top-left", CORNER_TL},
-      {"top-right", CORNER_TR},
-      {"bottom", EDGE_B},
-      {"right", EDGE_R},
-      {"left", EDGE_L},
-      {"top", EDGE_T}
-  };
-
   if (annotations->GetNumberOfNestedElements() == 0)
   {
       vtkErrorWithObjectMacro(
@@ -231,7 +219,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
     std::string position = cornerOrEdge->GetAttribute("position");
 
-    if (!positionMap.count(position))
+    if (!this->positionMap.count(position))
     {
       vtkErrorWithObjectMacro(
           textNode,
@@ -240,7 +228,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       return cornerAnnotations;
     }
 
-    TextLocation location = positionMap.at(position);
+    TextLocation location = this->positionMap.at(position);
     int numProperties = cornerOrEdge->GetNumberOfNestedElements();
 
     if (numProperties == 0)
