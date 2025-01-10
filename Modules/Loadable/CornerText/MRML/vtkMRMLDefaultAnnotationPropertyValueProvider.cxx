@@ -47,59 +47,74 @@ void vtkMRMLDefaultAnnotationPropertyValueProvider::PrintSelf(ostream& os, vtkIn
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLDefaultAnnotationPropertyValueProvider::CanProvideValueForProperty(
-    const std::string &property)
+bool vtkMRMLDefaultAnnotationPropertyValueProvider::CanProvideValueForPropertyName(
+    const std::string &propertyName)
 {
-  return registeredProperties.count(property);
+  return registeredProperties.count(propertyName);
 }
 
 //---------------------------------------------------------------------------
-std::string vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForProperty(
-    const std::string &property, vtkMRMLSliceNode *sliceNode)
+std::string
+vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
+    const std::string &propertyName, const XMLTagAttributes &attributes,
+    vtkMRMLSliceNode *sliceNode)
 {
   vtkMRMLSliceLogic *sliceLogic = this->GetAppLogic()->GetSliceLogic(sliceNode);
 
   if (!sliceLogic) { return ""; }
 
-  vtkMRMLSliceCompositeNode  *sliceCNode = sliceLogic->GetSliceCompositeNode();
+  std::string output = "";
 
-  if (!sliceCNode) { return ""; };
+  if (propertyName == "VolumeName")
+  {
+    vtkMRMLVolumeNode* volumeNode;
+    const int layer = this->GetLayerValueAsInteger(attributes);
+    switch (layer)
+    {
+      case LAYER_FOREGROUND:
+        {
+          output = (volumeNode = sliceLogic->GetForegroundLayer()->GetVolumeNode()) != nullptr
+                     ? volumeNode->GetName()
+                     : "";
+          break;
+        }
+      case LAYER_BACKGROUND:
+        {
+          output = (volumeNode = sliceLogic->GetBackgroundLayer()->GetVolumeNode()) != nullptr
+                     ? volumeNode->GetName()
+                     : "";
+          break;
+        }
+      case LAYER_LABEL:
+        {
+          output = (volumeNode = sliceLogic->GetLabelLayer()->GetVolumeNode()) != nullptr
+                     ? volumeNode->GetName()
+                     : "";
+          break;
+        }
+      default:
+        {
+          break;
+        }
+    }
+  }
+  else if (propertyName == "SlabReconstructionThickness" &&
+             sliceNode->GetSlabReconstructionEnabled())
+  {
+    output = std::to_string(sliceNode->GetSlabReconstructionThickness());
+  }
+  else if (propertyName == "SlabReconstructionType" &&
+             sliceNode->GetSlabReconstructionEnabled())
+  {
+    output = std::to_string(sliceNode->GetSlabReconstructionType());
+  }
+  
+  if (output != "" && attributes.count("prefix"))
+  {
+    output = attributes.at("prefix") + output;
+  }
 
-  vtkMRMLVolumeNode* vn;
-  if (property == "Background")
-  {
-    return (vn = sliceLogic->GetBackgroundLayer()->GetVolumeNode())
-               ? vn->GetName()
-               : "";
-  }
-  else if (property == "Foreground")
-  {
-    return (vn = sliceLogic->GetForegroundLayer()->GetVolumeNode())
-               ? vn->GetName()
-               : "";
-  }
-  else if (property == "Label")
-  {
-    return (vn = sliceLogic->GetLabelLayer()->GetVolumeNode())
-               ? std::string(vn->GetName()) + " (" +
-                     std::to_string(sliceCNode->GetLabelOpacity() * 100) + "%)"
-               : "";
-  }
-  else if (property == "SlabReconstructionThickness" && sliceNode->GetSlabReconstructionEnabled())
-  {
-    return "Thickness: " +
-           std::to_string(sliceNode->GetSlabReconstructionThickness());
-  }
-  else if (property == "SlabReconstructionType" &&
-           sliceNode->GetSlabReconstructionEnabled())
-  {
-    return "Type: " +
-           std::to_string(sliceNode->GetSlabReconstructionType());
-  }
-  else
-  {
-    return "";
-  }
+  return output;
 }
 
 //---------------------------------------------------------------------------

@@ -454,36 +454,36 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   <!-- For corners -->
   <corner position="bottom-left">
     <!-- Generic properties -->
-    <property name="Label" prefix="L: " category="A"/>
-    <property name="Foreground" prefix="F: " category="A"/>
-    <property name="Background" prefix="B: " category="A"/>
+    <property name="VolumeName" layer="label" prefix="L: " display-level="always"/>
+    <property name="VolumeName" layer="foreground" prefix="F: " display-level="always"/>
+    <property name="VolumeName" layer="background" prefix="B: " display-level="always"/>
   </corner>
 
   <corner position="top-left">
     <!-- DICOM specific properties -->
-    <property name="PatientName" category="B"/>
-    <property name="PatientID" prefix="ID: " category="A"/>
-    <property name="PatientInfo" category="B"/>
-    <property name="SeriesDate" prefix="B: " layer="background" category="B"/>
-    <property name="SeriesDate" prefix="F: " layer="foreground" category="B"/>
-    <property name="SeriesTime" prefix="B: " layer="background" category="C"/>
-    <property name="SeriesTime" prefix="F: " layer="foreground" category="C"/>
-    <property name="SeriesDescription" prefix="B: " layer="background" category="C"/>
-    <property name="SeriesDescription" prefix="F: " layer="foreground" category="C"/>
+    <property name="PatientName" display-level="sometimes"/>
+    <property name="PatientID" prefix="ID: " display-level="always"/>
+    <property name="PatientInfo" display-level="sometimes"/>
+    <property name="SeriesDate" prefix="B: " layer="background" display-level="sometimes"/>
+    <property name="SeriesDate" prefix="F: " layer="foreground" display-level="sometimes"/>
+    <property name="SeriesTime" prefix="B: " layer="background" display-level="least"/>
+    <property name="SeriesTime" prefix="F: " layer="foreground" display-level="least"/>
+    <property name="SeriesDescription" prefix="B: " layer="background" display-level="least"/>
+    <property name="SeriesDescription" prefix="F: " layer="foreground" display-level="least"/>
   </corner>
 
   <corner position="top-right">
     <!-- DICOM specific properties -->
-    <property name="InstitutionName" category="B"/>
-    <property name="ReferringPhysician" category="B"/>
-    <property name="Manufacturer" category="C"/>
-    <property name="Model" category="C"/>
-    <property name="Patient-Position" category="A"/>
-    <property name="TR" category="A"/>
-    <property name="TE" category="A"/>
+    <property name="InstitutionName" display-level="sometimes"/>
+    <property name="ReferringPhysician" display-level="sometimes"/>
+    <property name="Manufacturer" display-level="least"/>
+    <property name="Model" display-level="least"/>
+    <property name="Patient-Position" display-level="always"/>
+    <property name="TR" display-level="always"/>
+    <property name="TE" display-level="always"/>
     <!-- Generic properties -->
-    <property name="SlabReconstructionThickness" prefix="Thickness: " category="A"/>
-    <property name="SlabReconstructionType" prefix="Type: " category="A"/>
+    <property name="SlabReconstructionThickness" prefix="Thickness: " display-level="always"/>
+    <property name="SlabReconstructionType" prefix="Type: " display-level="always"/>
   </corner>
 </annotations>)");
       cornerAnnotationsTextNode = newScene->AddNode(tmpCornerAnnotations);

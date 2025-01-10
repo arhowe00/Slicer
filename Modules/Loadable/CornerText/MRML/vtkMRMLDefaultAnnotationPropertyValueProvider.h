@@ -40,9 +40,10 @@ public:
   vtkTypeMacro(vtkMRMLDefaultAnnotationPropertyValueProvider, vtkMRMLAbstractAnnotationPropertyValueProvider);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  bool CanProvideValueForProperty(const std::string &property) override;
-  std::string GetValueForProperty(const std::string &property,
-                             vtkMRMLSliceNode *sliceNode) override;
+  bool CanProvideValueForPropertyName(const std::string &propertyName) override;
+  std::string GetValueForPropertyName(const std::string &propertyName,
+                                      const XMLTagAttributes &attributes,
+                                      vtkMRMLSliceNode *) override;
   std::unordered_set<std::string> GetSupportedProperties() override;
 
   vtkGetObjectMacro(AppLogic, vtkMRMLApplicationLogic);
@@ -59,8 +60,7 @@ private:
   void operator=(const vtkMRMLDefaultAnnotationPropertyValueProvider&) = delete;
 
   const std::unordered_set<std::string> registeredProperties = {
-      "Background", "Foreground", "Label", "SlabReconstructionThickness",
-      "SlabReconstructionType"};
+      "VolumeName", "SlabReconstructionThickness", "SlabReconstructionType"};
 
   vtkMRMLApplicationLogic* AppLogic;
 };

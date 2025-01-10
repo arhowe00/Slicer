@@ -164,10 +164,10 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
 //---------------------------------------------------------------------------
 std::array<std::string, 8>
 vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
-                                              vtkMRMLTextNode *textNode)
+                                              vtkMRMLTextNode *textNode,
+                                              int displayAmount)
 {
   std::array<std::string, 8> cornerAnnotations{};
-
   if (!sliceNode || !textNode)
   {
     vtkErrorWithObjectMacro(sliceNode, "Invalid input nodes.");
@@ -243,9 +243,9 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
     std::string text = "";
 
-    for (int p_idx = 0; p_idx < numProperties; ++p_idx)
+    for (int propertyIdx = 0; propertyIdx < numProperties; ++propertyIdx)
     {
-      vtkXMLDataElement *property = cornerOrEdge->GetNestedElement(p_idx);
+      vtkXMLDataElement *property = cornerOrEdge->GetNestedElement(propertyIdx);
       if (std::string(property->GetName()) != "property")
       {
         vtkErrorWithObjectMacro(textNode,
@@ -254,27 +254,41 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
         break;
       }
 
-      // TODO: Exclude certain categories by passing a variable to
-      // GenerateAnnotations
-      std::string propertyName = "", propertyValue = "", prefix = "",
-                  category = "";
+      std::string propertyName = "", propertyValue = "";
+      vtkMRMLAbstractAnnotationPropertyValueProvider::XMLTagAttributes
+          attributes;
+
+      // Get the value for "name" in the tag <property "name"=...> (required)
 
       if (property->GetAttribute("name"))
       {
         propertyName = property->GetAttribute("name");
       }
       else
+      {
         vtkWarningWithObjectMacro(textNode,
                                 "<" + std::string(cornerOrEdge->GetName()) +
                                     " position=" + position +
                                     "> has a property with a missing name.");
+        break;
+      }
+
+      // Get the attribute values out of the XML tag
+
+      for (int attributeIdx = 0;
+           attributeIdx < property->GetNumberOfAttributes(); ++attributeIdx)
+      {
+        attributes.insert({property->GetAttributeName(attributeIdx),
+                           property->GetAttributeValue(attributeIdx)});
+      }
 
       // we have to check if the name is registered by a plugin
       for (const auto [plugin, provider] : registeredProviders)
       {
-        if (provider->CanProvideValueForProperty(propertyName))
+        if (provider->CanProvideValueForPropertyName(propertyName))
         {
-          propertyValue = provider->GetValueForProperty(propertyName, sliceNode);
+          propertyValue = provider->GetValueForPropertyName(
+              propertyName, attributes, sliceNode);
         }
       }
 
@@ -289,15 +303,12 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       }
       else
       {
-        if (property->GetAttribute("prefix") != nullptr)
+        // Only append the text if our selected display amount permits
+        if (vtkMRMLAbstractAnnotationPropertyValueProvider::
+                GetDisplayLevelValueAsInteger(attributes) <= displayAmount)
         {
-          prefix = property->GetAttribute("prefix");
+          text += propertyValue + '\n';
         }
-        if (property->GetAttribute("category") != nullptr)
-        {
-          category = property->GetAttribute("category");
-        }
-        text += prefix + propertyValue + '\n';
       }
     }
 

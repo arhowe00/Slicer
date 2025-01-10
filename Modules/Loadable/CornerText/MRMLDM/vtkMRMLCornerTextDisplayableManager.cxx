@@ -144,8 +144,9 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFr
   const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
           this->External->GetMRMLSliceNode(),
-          this->GetTextNode());
-  for (int idx = 0; idx <= vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
+          this->GetTextNode(),
+          1000);
+  for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
     // TODO: add functionality to enabling/disabling annotation locations
     if (true || this->GetLocationEnabled(idx))
