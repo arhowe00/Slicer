@@ -59,35 +59,47 @@ std::string vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForProperty(
 {
   vtkMRMLSliceLogic *sliceLogic = this->GetAppLogic()->GetSliceLogic(sliceNode);
 
-  if (!sliceLogic) return "";
+  if (!sliceLogic) { return ""; }
 
   vtkMRMLSliceCompositeNode  *sliceCNode = sliceLogic->GetSliceCompositeNode();
 
-  if (!sliceCNode) return "";
+  if (!sliceCNode) { return ""; };
 
   vtkMRMLVolumeNode* vn;
   if (property == "Background")
+  {
     return (vn = sliceLogic->GetBackgroundLayer()->GetVolumeNode())
                ? vn->GetName()
                : "";
+  }
   else if (property == "Foreground")
+  {
     return (vn = sliceLogic->GetForegroundLayer()->GetVolumeNode())
                ? vn->GetName()
                : "";
+  }
   else if (property == "Label")
+  {
     return (vn = sliceLogic->GetLabelLayer()->GetVolumeNode())
                ? std::string(vn->GetName()) + " (" +
                      std::to_string(sliceCNode->GetLabelOpacity() * 100) + "%)"
                : "";
+  }
   else if (property == "SlabReconstructionThickness" && sliceNode->GetSlabReconstructionEnabled())
+  {
     return "Thickness: " +
            std::to_string(sliceNode->GetSlabReconstructionThickness());
+  }
   else if (property == "SlabReconstructionType" &&
            sliceNode->GetSlabReconstructionEnabled())
+  {
     return "Type: " +
            std::to_string(sliceNode->GetSlabReconstructionType());
+  }
   else
+  {
     return "";
+  }
 }
 
 //---------------------------------------------------------------------------

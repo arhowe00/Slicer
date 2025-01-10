@@ -272,7 +272,9 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
                   category = "";
 
       if (property->GetAttribute("name"))
+      {
         propertyName = property->GetAttribute("name");
+      }
       else
         vtkWarningWithObjectMacro(textNode,
                                 "<" + std::string(cornerOrEdge->GetName()) +
@@ -281,8 +283,12 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
       // we have to check if the name is registered by a plugin
       for (const auto [plugin, provider] : registeredProviders)
+      {
         if (provider->CanProvideValueForProperty(propertyName))
+        {
           propertyValue = provider->GetValueForProperty(propertyName, sliceNode);
+        }
+      }
 
       const bool valueNotProvided = propertyName != "" && propertyValue == "";
 
@@ -295,10 +301,14 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
         propertyValue = "Unregistered Property: \"" + propertyName + "\"";
       }
 
-      if (property->GetAttribute("prefix"))
+      if (property->GetAttribute("prefix") != nullptr)
+      {
         prefix = property->GetAttribute("prefix");
-      if (property->GetAttribute("category"))
+      }
+      if (property->GetAttribute("category") != nullptr)
+      {
         category = property->GetAttribute("category");
+      }
       
       text += prefix + propertyValue + '\n';
     }

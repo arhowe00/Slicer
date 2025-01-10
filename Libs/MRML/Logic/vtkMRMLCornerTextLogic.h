@@ -44,14 +44,15 @@ class VTK_MRML_LOGIC_EXPORT vtkMRMLCornerTextLogic :
 {
 public:
   enum TextLocation {
-    CORNER_BL,
+    CORNER_BL=0,
     CORNER_BR,
     CORNER_TL,
     CORNER_TR,
     EDGE_B,
     EDGE_R,
     EDGE_L,
-    EDGE_T
+    EDGE_T,
+    TextLocation_Last
   };
 
   static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
