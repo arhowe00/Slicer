@@ -454,22 +454,22 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   <!-- For corners -->
   <corner position="bottom-left">
     <!-- Generic properties -->
-    <property name="Label" category="A"/>
-    <property name="Foreground" category="A"/>
-    <property name="Background" category="A"/>
+    <property name="Label" prefix="L: " category="A"/>
+    <property name="Foreground" prefix="F: " category="A"/>
+    <property name="Background" prefix="B: " category="A"/>
   </corner>
 
   <corner position="top-left">
     <!-- DICOM specific properties -->
     <property name="PatientName" category="B"/>
-    <property name="PatientID" category="A"/>
+    <property name="PatientID" prefix="ID: " category="A"/>
     <property name="PatientInfo" category="B"/>
-    <property name="SeriesDate" layer="background" category="B"/>
-    <property name="SeriesDate" layer="foreground" category="B"/>
-    <property name="SeriesTime" layer="background" category="C"/>
-    <property name="SeriesTime" layer="foreground" category="C"/>
-    <property name="SeriesDescription" layer="background" category="C"/>
-    <property name="SeriesDescription" layer="foreground" category="C"/>
+    <property name="SeriesDate" prefix="B: " layer="background" category="B"/>
+    <property name="SeriesDate" prefix="F: " layer="foreground" category="B"/>
+    <property name="SeriesTime" prefix="B: " layer="background" category="C"/>
+    <property name="SeriesTime" prefix="F: " layer="foreground" category="C"/>
+    <property name="SeriesDescription" prefix="B: " layer="background" category="C"/>
+    <property name="SeriesDescription" prefix="F: " layer="foreground" category="C"/>
   </corner>
 
   <corner position="top-right">
@@ -482,8 +482,8 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
     <property name="TR" category="A"/>
     <property name="TE" category="A"/>
     <!-- Generic properties -->
-    <property name="SlabReconstructionThickness" category="A"/>
-    <property name="SlabReconstructionType" category="A"/>
+    <property name="SlabReconstructionThickness" prefix="Thickness: " category="A"/>
+    <property name="SlabReconstructionType" prefix="Type: " category="A"/>
   </corner>
 </annotations>)");
       cornerAnnotationsTextNode = newScene->AddNode(tmpCornerAnnotations);
