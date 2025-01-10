@@ -240,7 +240,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       return cornerAnnotations;
     }
 
-    TextLocation loc = positionMap.at(position);
+    TextLocation location = positionMap.at(position);
     int numProperties = cornerOrEdge->GetNumberOfNestedElements();
 
     if (numProperties == 0)
@@ -316,7 +316,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     // once each property has been parsed, the annotation for that position
     // is fully specified
 
-    cornerAnnotations[loc] += text; 
+    cornerAnnotations[location] += text; 
   }
 
   return cornerAnnotations;

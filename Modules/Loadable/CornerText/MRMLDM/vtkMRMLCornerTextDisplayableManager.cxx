@@ -60,7 +60,7 @@ public:
 
   // Slice Node
   void UpdateCornerAnnotationsFromSliceNode();
-  bool GetLocationEnabled(vtkMRMLCornerTextLogic::TextLocation);
+  bool GetLocationEnabled(int);
   vtkMRMLTextNode *GetTextNode();
 
 private:
@@ -90,7 +90,7 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode()
 
 //---------------------------------------------------------------------------
 bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
-    vtkMRMLCornerTextLogic::TextLocation location)
+    int location)
 {
   switch (location) 
   {
@@ -145,13 +145,12 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFr
       cornerTextLogic->GenerateAnnotations(
           this->External->GetMRMLSliceNode(),
           this->GetTextNode());
-  for (vtkMRMLCornerTextLogic::TextLocation location :
-       vtkMRMLCornerTextLogic::locations)
+  for (int idx = 0; idx <= vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
     // TODO: add functionality to enabling/disabling annotation locations
-    if (true || this->GetLocationEnabled(location))
+    if (true || this->GetLocationEnabled(idx))
     {
-      cornerAnnotation->SetText(location, generatedText[location].c_str());
+      cornerAnnotation->SetText(idx, generatedText[idx].c_str());
       cornerAnnotation->GetTextProperty()->SetFontSize(14);
       cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
     }

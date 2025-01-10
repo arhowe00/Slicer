@@ -55,9 +55,6 @@ public:
     TextLocation_Last
   };
 
-  static constexpr TextLocation locations[] = {CORNER_BL, CORNER_BR, CORNER_TL,
-                                               CORNER_TR, EDGE_B,    EDGE_R,
-                                               EDGE_L,    EDGE_T};
   /// The Usual vtk class functions
   static vtkMRMLCornerTextLogic *New();
   vtkTypeMacro(vtkMRMLCornerTextLogic, vtkMRMLAbstractLogic);
