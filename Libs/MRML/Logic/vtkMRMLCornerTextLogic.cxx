@@ -286,19 +286,19 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
             textNode, "<" + std::string(cornerOrEdge->GetName()) +
                           " position=" + position +
                           "> had no property value for " + propertyName + ".");
-        propertyValue = "Unregistered Property: \"" + propertyName + "\"";
       }
-
-      if (property->GetAttribute("prefix") != nullptr)
+      else
       {
-        prefix = property->GetAttribute("prefix");
+        if (property->GetAttribute("prefix") != nullptr)
+        {
+          prefix = property->GetAttribute("prefix");
+        }
+        if (property->GetAttribute("category") != nullptr)
+        {
+          category = property->GetAttribute("category");
+        }
+        text += prefix + propertyValue + '\n';
       }
-      if (property->GetAttribute("category") != nullptr)
-      {
-        category = property->GetAttribute("category");
-      }
-      
-      text += prefix + propertyValue + '\n';
     }
 
     // once each property has been parsed, the annotation for that position
