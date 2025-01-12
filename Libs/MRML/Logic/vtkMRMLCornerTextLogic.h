@@ -23,6 +23,9 @@
 #ifndef __vtkMRMLCornerTextLogic_h
 #define __vtkMRMLCornerTextLogic_h
 
+// VTK includes
+#include <vtkSetGet.h>
+
 // MRMLLogic includes
 #include "vtkMRMLAbstractLogic.h"
 #include "vtkMRMLLogicExport.h"
@@ -68,6 +71,16 @@ public:
                                 vtkMRMLAbstractAnnotationPropertyValueProvider *);
   std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
                                                 vtkMRMLTextNode *);
+  bool ToggleLocation(vtkMRMLSliceNode*, TextLocation, bool enabled);
+
+  vtkGetMacro(DisplayStrictness, int);
+  vtkSetMacro(DisplayStrictness, int);
+
+  vtkGetMacro(FontSize, int);
+  vtkSetMacro(FontSize, int);
+  
+  vtkGetMacro(FontFamily, std::string);
+  vtkSetMacro(FontFamily, std::string);
 
 protected:
   vtkMRMLCornerTextLogic();
@@ -102,6 +115,8 @@ private:
   /// actual string intended to be rendered on a given slice view.
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
 
+  int DisplayStrictness, FontSize;
+  std::string FontFamily;
   std::unordered_map<
       std::string,
       vtkSmartPointer<vtkMRMLAbstractAnnotationPropertyValueProvider>>

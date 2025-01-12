@@ -164,8 +164,7 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
 //---------------------------------------------------------------------------
 std::array<std::string, 8>
 vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
-                                              vtkMRMLTextNode *textNode,
-                                              int displayAmount)
+                                              vtkMRMLTextNode *textNode)
 {
   std::array<std::string, 8> cornerAnnotations{};
   if (!sliceNode || !textNode)
@@ -305,7 +304,8 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       {
         // Only append the text if our selected display amount permits
         if (vtkMRMLAbstractAnnotationPropertyValueProvider::
-                GetDisplayLevelValueAsInteger(attributes) <= displayAmount)
+                GetDisplayLevelValueAsInteger(attributes) >=
+            this->DisplayStrictness)
         {
           text += propertyValue + '\n';
         }
@@ -319,4 +319,73 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
   }
 
   return cornerAnnotations;
+}
+
+//---------------------------------------------------------------------------
+bool vtkMRMLCornerTextLogic::ToggleLocation(vtkMRMLSliceNode* sliceNode,
+    TextLocation location, bool enabled)
+{
+  if (location < TextLocation_Last)
+  {
+    switch (location)
+    {
+      case CORNER_BL: 
+      {
+        enabled ? sliceNode->BottomLeftTextEnabledOn()
+                : sliceNode->BottomLeftTextEnabledOff();
+        break;
+      }
+      case CORNER_BR: 
+      {
+        enabled ? sliceNode->BottomRightTextEnabledOn()
+                : sliceNode->BottomRightTextEnabledOff();
+        break;
+      }
+      case CORNER_TL: 
+      {
+        enabled ? sliceNode->TopLeftTextEnabledOn()
+                : sliceNode->TopLeftTextEnabledOff();
+        break;
+      }
+      case CORNER_TR: 
+      {
+        enabled ? sliceNode->TopRightTextEnabledOn()
+                : sliceNode->TopRightTextEnabledOff();
+        break;
+      }
+      case EDGE_B: 
+      {
+        enabled ? sliceNode->BottomEdgeTextEnabledOn()
+                : sliceNode->BottomEdgeTextEnabledOff();
+        break;
+      }
+      case EDGE_R: 
+      {
+        enabled ? sliceNode->RightEdgeTextEnabledOn()
+                : sliceNode->RightEdgeTextEnabledOff();
+        break;
+      }
+      case EDGE_L: 
+      {
+        enabled ? sliceNode->LeftEdgeTextEnabledOn()
+                : sliceNode->LeftEdgeTextEnabledOff();
+        break;
+      }
+      case EDGE_T: 
+      {
+        enabled ? sliceNode->TopEdgeTextEnabledOn()
+                : sliceNode->TopEdgeTextEnabledOff();
+        break;
+      }
+      default: 
+      {
+        break;
+      }
+    }
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }

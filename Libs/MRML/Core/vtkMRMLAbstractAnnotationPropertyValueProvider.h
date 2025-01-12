@@ -45,9 +45,9 @@ public:
 
   enum DisplayLevel
   {
-    DISPLAY_ALWAYS = 1,
+    DISPLAY_LEAST = 1,
     DISPLAY_SOMETIMES,
-    DISPLAY_LEAST
+    DISPLAY_ALWAYS
   };
 
   // Layers

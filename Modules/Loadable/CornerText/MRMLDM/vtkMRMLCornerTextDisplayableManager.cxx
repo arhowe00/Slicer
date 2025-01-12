@@ -144,16 +144,21 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFr
   const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
           this->External->GetMRMLSliceNode(),
-          this->GetTextNode(),
-          1000);
+          this->GetTextNode());
   for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
-    // TODO: add functionality to enabling/disabling annotation locations
-    if (true || this->GetLocationEnabled(idx))
+    if (this->GetLocationEnabled(idx))
     {
       cornerAnnotation->SetText(idx, generatedText[idx].c_str());
-      cornerAnnotation->GetTextProperty()->SetFontSize(14);
-      cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
+      cornerAnnotation->GetTextProperty()->SetFontSize(cornerTextLogic->GetFontSize());
+      if (cornerTextLogic->GetFontFamily() == "Arial")
+      {
+        cornerAnnotation->GetTextProperty()->SetFontFamilyToArial();
+      }
+      else // times is the default, but the font family should be == "Times"
+      {
+        cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
+      }
     }
   }
   return;
