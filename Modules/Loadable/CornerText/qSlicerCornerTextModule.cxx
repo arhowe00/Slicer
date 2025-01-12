@@ -20,6 +20,7 @@
 // Slicer includes
 #include <vtkMRMLCornerTextLogic.h>
 #include <vtkSlicerApplicationLogic.h>
+#include "qSlicerApplication.h"
 
 // CornerText includes
 #include "qSlicerCornerTextModule.h"
@@ -29,6 +30,10 @@
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
+
+// Qt includes
+#include <QSettings>
+
 VTK_MODULE_INIT(vtkSlicerCornerTextModuleMRMLDisplayableManager)
 
 //-----------------------------------------------------------------------------
@@ -99,6 +104,19 @@ QStringList qSlicerCornerTextModule::dependencies() const
   return QStringList();
 }
 
+void qSlicerCornerTextModule::readSettings() const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  vtkMRMLCornerTextLogic *cornerTextLogic =
+      this->appLogic()->GetCornerTextLogic();
+
+  cornerTextLogic->SetDisplayStrictness(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
+  cornerTextLogic->SetFontSize(settings->value("DataProbe/sliceViewAnnotations.fontSize", 14).toInt());
+  cornerTextLogic->SetFontFamily(settings->value("DataProbe/sliceViewAnnotations.fontFamily", "Times").toString().toStdString());
+
+  return;
+}
+
 //-----------------------------------------------------------------------------
 void qSlicerCornerTextModule::setup()
 {
@@ -112,6 +130,9 @@ void qSlicerCornerTextModule::setup()
   provider->SetAppLogic(this->appLogic());
   this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider(
       "Default", provider);
+
+  // Read DataProbe settings
+  this->readSettings();
 }
 
 //-----------------------------------------------------------------------------

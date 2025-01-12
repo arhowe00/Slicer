@@ -62,6 +62,8 @@ protected:
   /// Create and return the logic associated to this module
   vtkMRMLAbstractLogic* createLogic() override { return nullptr; };
 
+  void readSettings() const;
+
 protected:
   QScopedPointer<qSlicerCornerTextModulePrivate> d_ptr;
 
