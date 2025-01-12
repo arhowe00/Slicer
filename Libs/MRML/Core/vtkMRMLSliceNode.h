@@ -673,10 +673,10 @@ protected:
 
   vtkSmartPointer<vtkPlane> ImplicitFunction;
 
-  bool BottomLeftTextEnabled{false};
+  bool BottomLeftTextEnabled{true};
   bool BottomRightTextEnabled{false};
-  bool TopLeftTextEnabled{false};
-  bool TopRightTextEnabled{false};
+  bool TopLeftTextEnabled{true};
+  bool TopRightTextEnabled{true};
   bool BottomEdgeTextEnabled{false};
   bool RightEdgeTextEnabled{false};
   bool LeftEdgeTextEnabled{false};
