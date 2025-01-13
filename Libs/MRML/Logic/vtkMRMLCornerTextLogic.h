@@ -70,7 +70,8 @@ public:
   bool RegisterPropertyValueProvider(const std::string &pluginName,
                                 vtkMRMLAbstractAnnotationPropertyValueProvider *);
   std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
-                                                vtkMRMLTextNode *);
+                                                vtkMRMLTextNode *,
+                                                bool printWarnings = true);
   bool ToggleLocation(vtkMRMLSliceNode*, TextLocation, bool enabled);
 
   vtkGetMacro(DisplayStrictness, int);

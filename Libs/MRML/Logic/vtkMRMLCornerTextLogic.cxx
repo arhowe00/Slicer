@@ -164,12 +164,16 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
 //---------------------------------------------------------------------------
 std::array<std::string, 8>
 vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
-                                              vtkMRMLTextNode *textNode)
+                                              vtkMRMLTextNode *textNode,
+                                              bool printWarnings)
 {
   std::array<std::string, 8> cornerAnnotations{};
   if (!sliceNode || !textNode)
   {
-    vtkErrorWithObjectMacro(sliceNode, "Invalid input nodes.");
+    if (printWarnings)
+    {
+      vtkErrorWithObjectMacro(sliceNode, "Invalid input nodes.");
+    }
     return cornerAnnotations;
   }
 
@@ -180,7 +184,10 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
   vtkXMLDataElement* annotations = this->ParseTextNode(textNode);
   if (!annotations)
   {
-    vtkErrorWithObjectMacro(textNode, "Could not find <annotations> tag.");
+    if (printWarnings)
+    {
+      vtkErrorWithObjectMacro(textNode, "Could not find <annotations> tag.");
+    }
     return cornerAnnotations;
   }
 
@@ -188,10 +195,12 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
   if (annotations->GetNumberOfNestedElements() == 0)
   {
-      vtkErrorWithObjectMacro(
-          textNode,
-          "<annotations> tag had no nested elements.");
-      return cornerAnnotations;
+    if (printWarnings)
+    {
+      vtkErrorWithObjectMacro(textNode,
+                              "<annotations> tag had no nested elements.");
+    }
+    return cornerAnnotations;
   }
 
   for (int idx = 0; idx < annotations->GetNumberOfNestedElements(); ++idx)
@@ -202,17 +211,24 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     if (std::string(cornerOrEdge->GetName()) != "corner" &&
         std::string(cornerOrEdge->GetName()) != "edge")
     {
-      vtkErrorWithObjectMacro(
-          textNode,
-          "<annotations> tag must be nested with <corner> or <edge> tags.");
+      if (printWarnings)
+      {
+        vtkErrorWithObjectMacro(
+            textNode,
+            "<annotations> tag must be nested with <corner> or <edge> tags.");
+      }
       return cornerAnnotations;
     }
     if (!cornerOrEdge->GetAttribute("position"))
     {
-      vtkErrorWithObjectMacro(
-          textNode,
-          "<corner> and <edge> tags must specify a position attribute (e.g. "
-          "<corner position=\"bottom-left\"> or <edge position=\"bottom\">).");
+      if (printWarnings)
+      {
+        vtkErrorWithObjectMacro(
+            textNode,
+            "<corner> and <edge> tags must specify a position attribute (e.g. "
+            "<corner position=\"bottom-left\"> or <edge "
+            "position=\"bottom\">).");
+      }
       return cornerAnnotations;
     }
 
@@ -220,10 +236,13 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
     if (!this->positionMap.count(position))
     {
-      vtkErrorWithObjectMacro(
-          textNode,
-          "position attribute of <corner>/<edge> tag invalid (e.g. "
-          "<corner position=\"bottom-left\"> or <edge position=\"bottom\">).");
+      if (printWarnings)
+      {
+        vtkErrorWithObjectMacro(
+            textNode, "position attribute of <corner>/<edge> tag invalid (e.g. "
+                      "<corner position=\"bottom-left\"> or <edge "
+                      "position=\"bottom\">).");
+      }
       return cornerAnnotations;
     }
 
@@ -232,9 +251,13 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
     if (numProperties == 0)
     {
-        vtkErrorWithObjectMacro(
-            textNode,
-            "<" + std::string(cornerOrEdge->GetName()) + " position=" + position + "> had no nested elements.");
+      if (printWarnings)
+      {
+        vtkWarningWithObjectMacro(textNode,
+                                  "<" + std::string(cornerOrEdge->GetName()) +
+                                      " position=" + position +
+                                      "> had no nested elements.");
+      }
         return cornerAnnotations;
     }
 
@@ -247,9 +270,12 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       vtkXMLDataElement *property = cornerOrEdge->GetNestedElement(propertyIdx);
       if (std::string(property->GetName()) != "property")
       {
-        vtkErrorWithObjectMacro(textNode,
-                                "<corner>/<edge> tags must only be nested with "
-                                "self-closing <property /> tags.");
+        if (printWarnings)
+        {
+          vtkErrorWithObjectMacro(
+              textNode, "<corner>/<edge> tags must only be nested with "
+                        "self-closing <property /> tags.");
+        }
         break;
       }
 
@@ -265,10 +291,13 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
       }
       else
       {
-        vtkWarningWithObjectMacro(textNode,
-                                "<" + std::string(cornerOrEdge->GetName()) +
-                                    " position=" + position +
-                                    "> has a property with a missing name.");
+        if (printWarnings)
+        {
+          vtkErrorWithObjectMacro(textNode,
+                                  "<" + std::string(cornerOrEdge->GetName()) +
+                                      " position=" + position +
+                                      "> has a property with a missing name.");
+        }
         break;
       }
 
@@ -295,10 +324,14 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 
       if (valueNotProvided)
       {
-        vtkWarningWithObjectMacro(
-            textNode, "<" + std::string(cornerOrEdge->GetName()) +
-                          " position=" + position +
-                          "> had no property value for " + propertyName + ".");
+        if (printWarnings)
+        {
+          vtkErrorWithObjectMacro(textNode,
+                                  "<" + std::string(cornerOrEdge->GetName()) +
+                                      " position=" + position +
+                                      "> had no property value for " +
+                                      propertyName + ".");
+        }
       }
       else
       {

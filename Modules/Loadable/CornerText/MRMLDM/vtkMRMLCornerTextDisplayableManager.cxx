@@ -59,7 +59,7 @@ public:
   void UpdateDisplayableCornerText(vtkMRMLNode *node);
 
   // Slice Node
-  void UpdateCornerAnnotationsFromSliceNode();
+  void UpdateCornerAnnotationsFromSliceNode(bool printWarnings = true);
   bool GetLocationEnabled(int);
   vtkMRMLTextNode *GetTextNode();
 
@@ -116,7 +116,8 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFromSliceNode() 
+void vtkMRMLCornerTextDisplayableManager::vtkInternal::
+    UpdateCornerAnnotationsFromSliceNode(bool printWarnings)
 {
   // Get vtkMRMLCornerTextLogic
   vtkMRMLCornerTextLogic *cornerTextLogic =
@@ -144,7 +145,8 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::UpdateCornerAnnotationsFr
   const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
           this->External->GetMRMLSliceNode(),
-          this->GetTextNode());
+          this->GetTextNode(),
+          printWarnings);
   for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
     if (this->GetLocationEnabled(idx))
@@ -209,7 +211,7 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
 
   if (vtkMRMLSliceLogic::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode();
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(false);
   }
 
   this->Superclass::ProcessMRMLLogicsEvents(caller, event, callData);
@@ -262,6 +264,10 @@ void vtkMRMLCornerTextDisplayableManager::Create()
       this->GetMRMLApplicationLogic()->GetSliceLogic(this->GetMRMLSliceNode());
   vtkEventBroker::GetInstance()->AddObservation(
       sliceLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+
+  // As our slice logic callback does not generate warnings, we want to do an
+  // initial render with warnings printed.
+  this->Internal->UpdateCornerAnnotationsFromSliceNode(true);
 
   this->SetUpdateFromMRMLRequested(true);
 }
