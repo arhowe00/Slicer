@@ -114,6 +114,18 @@ void qSlicerCornerTextModule::readSettings() const
   cornerTextLogic->SetFontSize(settings->value("DataProbe/sliceViewAnnotations.fontSize", 14).toInt());
   cornerTextLogic->SetFontFamily(settings->value("DataProbe/sliceViewAnnotations.fontFamily", "Times").toString().toStdString());
 
+  // TODO: We have to read the settings
+  // cornerTextLogic->ToggleLocationGlobally(
+  //     vtkMRMLCornerTextLogic::CORNER_BL,
+  //     settings->value("DataProbe/sliceViewAnnotations.bottomLeft", "1")
+  //         .toBool());
+  // cornerTextLogic->ToggleLocationGlobally(
+  //     vtkMRMLCornerTextLogic::CORNER_TL,
+  //     settings->value("DataProbe/sliceViewAnnotations.topLeft", "1").toBool());
+  // cornerTextLogic->ToggleLocationGlobally(
+  //     vtkMRMLCornerTextLogic::CORNER_TR,
+  //     settings->value("DataProbe/sliceViewAnnotations.topRight", "1").toBool());
+
   return;
 }
 

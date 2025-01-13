@@ -13,9 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
-
 ==============================================================================*/
 
 #ifndef __qSlicerCornerTextFooBarWidget_h
@@ -25,20 +22,45 @@
 #include <QWidget>
 
 // FooBar Widgets includes
+#include "ctkPimpl.h"
+#include "ctkVTKObject.h"
+#include "qMRMLWidget.h"
 #include "qSlicerCornerTextModuleWidgetsExport.h"
+#include "vtkMRMLScene.h"
+#include "vtkMRMLLayoutLogic.h"
+#include "vtkMRMLCornerTextLogic.h"
 
 class qSlicerCornerTextFooBarWidgetPrivate;
 
 class Q_SLICER_MODULE_CORNERTEXT_WIDGETS_EXPORT qSlicerCornerTextFooBarWidget
-  : public QWidget
+  : public qMRMLWidget // just so we can implement setMRMLScene
 {
   Q_OBJECT
+  QVTK_OBJECT
+
 public:
-  typedef QWidget Superclass;
+  typedef qMRMLWidget Superclass;
   qSlicerCornerTextFooBarWidget(QWidget *parent=0);
   ~qSlicerCornerTextFooBarWidget() override;
 
+  vtkMRMLLayoutLogic* layoutLogic() const;
+  void setLayoutLogic(vtkMRMLLayoutLogic*);
+
+  vtkMRMLCornerTextLogic* cornerTextLogic() const;
+  void setCornerTextLogic(vtkMRMLCornerTextLogic*);
+
 protected slots:
+
+  void enableSliceViewAnnotations(bool enable);
+  void setTopLeftCornerActive(bool enable);
+  void setTopRightCornerActive(bool enable);
+  void setBottomLeftCornerActive(bool enable);
+  void setAnnotationDisplayLevel(int level); // 1, 2, or 3
+  void setFontFamily(const QString& fontFamily);
+  void setFontSize(int fontSize);
+  void setDICOMAnnotationsPersistence(bool enable);
+
+  void onLayoutLogicModifiedEvent();
 
 protected:
   QScopedPointer<qSlicerCornerTextFooBarWidgetPrivate> d_ptr;

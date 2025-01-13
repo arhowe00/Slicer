@@ -928,14 +928,21 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLWriteXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
-  vtkMRMLWriteXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
-  vtkMRMLWriteXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
+  // slice view annotations
+  //
+  // NOTE: These are currently omitted from serialization because the intended
+  // behavior of the new implementation of CornerText clashes with how corners
+  // are enabled in DataProbe. For now, corners are globally flagged and set by
+  // looping through the slice nodes within the `vtkMRMLCornerTextLogic`.
+  //
+  // vtkMRMLWriteXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
+  // vtkMRMLWriteXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
 
   vtkMRMLWriteXMLEndMacro();
 }
@@ -1031,14 +1038,20 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
   // slice view annotations
-  vtkMRMLReadXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
-  vtkMRMLReadXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
+  //
+  // NOTE: These are currently omitted from serialization because the intended
+  // behavior of the new implementation of CornerText clashes with how corners
+  // are enabled in DataProbe. For now, corners are globally flagged and set by
+  // looping through the slice nodes within the `vtkMRMLCornerTextLogic`.
+  //
+  // vtkMRMLReadXMLBooleanMacro(bottomLeftTextEnabled, BottomLeftTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(bottomRightTextEnabled, BottomRightTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(topRightTextEnabled, TopRightTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(bottomEdgeTextEnabled, BottomEdgeTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(rightEdgeTextEnabled, RightEdgeTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(leftEdgeTextEnabled, LeftEdgeTextEnabled);
+  // vtkMRMLReadXMLBooleanMacro(topEdgeTextEnabled, TopEdgeTextEnabled);
 
   vtkMRMLReadXMLEndMacro();
 

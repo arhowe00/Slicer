@@ -13,14 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 
-  This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
-  and was partially funded by NIH grant 3P41RR013218-12S1
-
 ==============================================================================*/
 
 // FooBar Widgets includes
 #include "qSlicerCornerTextFooBarWidget.h"
+#include "ctkPimpl.h"
 #include "ui_qSlicerCornerTextFooBarWidget.h"
+#include "vtkMRMLCornerTextLogic.h"
+
+// MRML includes
+#include <vtkMRMLLayoutLogic.h>
+#include <vtkMRMLSliceNode.h>
 
 //-----------------------------------------------------------------------------
 class qSlicerCornerTextFooBarWidgetPrivate
@@ -34,6 +37,11 @@ public:
   qSlicerCornerTextFooBarWidgetPrivate(
     qSlicerCornerTextFooBarWidget& object);
   virtual void setupUi(qSlicerCornerTextFooBarWidget*);
+  void init();
+  bool ToggleLocation(vtkMRMLCornerTextLogic::TextLocation, bool enabled);
+  
+  vtkMRMLLayoutLogic* LayoutLogic;
+  vtkMRMLCornerTextLogic* CornerTextLogic;
 };
 
 // --------------------------------------------------------------------------
@@ -52,6 +60,80 @@ void qSlicerCornerTextFooBarWidgetPrivate
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidgetPrivate
+::init()
+{
+  Q_Q(qSlicerCornerTextFooBarWidget);
+
+  QObject::connect(this->sliceViewAnnotationsCheckBox, SIGNAL(toggled(bool)), q, SLOT(enableSliceViewAnnotations(bool)));
+
+  // Corner Text Annotation ctk collapsible button panel
+  this->cornerTextParametersCollapsibleButton->setEnabled(true);
+
+  QObject::connect(this->topLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTopLeftCornerActive(bool)));
+  QObject::connect(this->topRightCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTopRightCornerActive(bool)));
+  QObject::connect(this->bottomLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setBottomLeftCornerActive(bool)));
+
+  // Amount subpanel
+  this->annotationsAmountGroupBox->setEnabled(true);
+  QObject::connect(this->level1RadioButton, &QRadioButton::toggled, [=](bool checked) {
+      if (checked) q->setAnnotationDisplayLevel(1);
+  });
+
+  QObject::connect(this->level2RadioButton, &QRadioButton::toggled, [=](bool checked) {
+      if (checked) q->setAnnotationDisplayLevel(2);
+  });
+
+  QObject::connect(this->level3RadioButton, &QRadioButton::toggled, [=](bool checked) {
+      if (checked) q->setAnnotationDisplayLevel(3);
+  });
+
+  // Font Properties subpanel
+  this->fontPropertiesGroupBox->setEnabled(true);
+  QObject::connect(this->timesFontRadioButton, &QRadioButton::toggled, [=](bool checked) {
+      if (checked) q->setFontFamily("Times");
+  });
+
+  QObject::connect(this->arialFontRadioButton, &QRadioButton::toggled, [=](bool checked) {
+      if (checked) q->setFontFamily("Arial");
+  });
+  QObject::connect(this->fontSizeSpinBox, SIGNAL(valueChanged(int)), q, SLOT(setFontSize(int)));
+
+  // DICOM Annotations subpanel
+  this->dicomAnnotationsCollapsibleGroupBox->setEnabled(false);
+  QObject::connect(this->backgroundPersistenceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDICOMAnnotationsPersistence(bool)));
+
+}
+
+bool qSlicerCornerTextFooBarWidgetPrivate::ToggleLocation(vtkMRMLCornerTextLogic::TextLocation location, bool enabled)
+{  
+  Q_Q(qSlicerCornerTextFooBarWidget);
+  vtkMRMLScene* mrmlScene = q->mrmlScene();
+  if (mrmlScene == nullptr)
+  {
+    return false;
+  }
+
+  for (int i = 0; i < mrmlScene->GetNumberOfNodesByClass("vtkMRMLSliceNode"); ++i)
+  {
+      vtkMRMLNode* node = mrmlScene->GetNthNodeByClass(i, "vtkMRMLSliceNode");
+      if (node == nullptr)
+      {
+        return false;
+      }
+
+      vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+      if (sliceNode == nullptr)
+      {
+        return false;
+      }
+
+      this->CornerTextLogic->ToggleLocation(sliceNode, location, enabled);
+  }
+  return true;
+ }
+
+//-----------------------------------------------------------------------------
 // qSlicerCornerTextFooBarWidget methods
 
 //-----------------------------------------------------------------------------
@@ -62,6 +144,7 @@ qSlicerCornerTextFooBarWidget
 {
   Q_D(qSlicerCornerTextFooBarWidget);
   d->setupUi(this);
+  d->init();
 }
 
 //-----------------------------------------------------------------------------
@@ -69,3 +152,133 @@ qSlicerCornerTextFooBarWidget
 ::~qSlicerCornerTextFooBarWidget()
 {
 }
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::enableSliceViewAnnotations(bool enable)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  // TODO: Not supported yet.
+  // d->CornerTextLogic->EnableSliceViewAnnotations(enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setTopLeftCornerActive(bool enable)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_TL, enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setTopRightCornerActive(bool enable)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_TR, enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setBottomLeftCornerActive(bool enable)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_BL, enable);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setAnnotationDisplayLevel(int level)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->CornerTextLogic->SetDisplayStrictness(level);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setFontFamily(const QString& fontFamily)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->CornerTextLogic->SetFontFamily(fontFamily.toStdString());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setFontSize(int fontSize)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  d->CornerTextLogic->SetFontSize(fontSize);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setDICOMAnnotationsPersistence(bool enable)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+  // TODO: Not supported yet.
+  // d->CornerTextLogic->SetDICOMAnnotationsPersistence(enable);
+}
+
+// ----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::onLayoutLogicModifiedEvent()
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (!d->LayoutLogic)
+  {
+    return;
+  }
+
+  setTopLeftCornerActive(d->topLeftCheckBox->isChecked());
+  setTopRightCornerActive(d->topRightCheckBox->isChecked());
+  setBottomLeftCornerActive(d->bottomLeftCheckBox->isChecked());
+}
+
+CTK_GET_CPP(qSlicerCornerTextFooBarWidget, vtkMRMLLayoutLogic*, layoutLogic, LayoutLogic)
+
+void qSlicerCornerTextFooBarWidget::setLayoutLogic(vtkMRMLLayoutLogic* newLayoutLogic)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+  if (d->LayoutLogic == newLayoutLogic)
+  {
+    return;
+  }
+
+  qvtkReconnect(d->LayoutLogic, newLayoutLogic, vtkCommand::ModifiedEvent,
+                   this, SLOT(onLayoutLogicModifiedEvent()));
+
+  d->LayoutLogic = newLayoutLogic;
+
+  if (d->LayoutLogic && d->LayoutLogic->GetMRMLScene())
+  {
+    this->setMRMLScene(d->LayoutLogic->GetMRMLScene());
+  }
+
+  this->onLayoutLogicModifiedEvent();
+}
+
+CTK_GET_CPP(qSlicerCornerTextFooBarWidget, vtkMRMLCornerTextLogic*, cornerTextLogic, CornerTextLogic)
+CTK_SET_CPP(qSlicerCornerTextFooBarWidget, vtkMRMLCornerTextLogic*, setCornerTextLogic, CornerTextLogic);

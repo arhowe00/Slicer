@@ -22,9 +22,11 @@
 #include "qSlicerAbstractModuleWidget.h"
 
 #include "qSlicerCornerTextModuleExport.h"
+#include "vtkMRMLAbstractLogic.h"
 
 class qSlicerCornerTextModuleWidgetPrivate;
 class vtkMRMLNode;
+class vtkMRMLCornerTextLogic;
 
 class Q_SLICER_QTMODULES_CORNERTEXT_EXPORT qSlicerCornerTextModuleWidget :
   public qSlicerAbstractModuleWidget
@@ -36,6 +38,10 @@ public:
   typedef qSlicerAbstractModuleWidget Superclass;
   qSlicerCornerTextModuleWidget(QWidget *parent=0);
   virtual ~qSlicerCornerTextModuleWidget();
+
+  /// To grab the Layout and CornerText logic (internal reasons)
+  void setMRMLScene(vtkMRMLScene* scene) override;
+  vtkMRMLCornerTextLogic* cornerTextLogic();
 
 public slots:
 

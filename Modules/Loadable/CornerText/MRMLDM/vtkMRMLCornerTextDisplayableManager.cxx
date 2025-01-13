@@ -15,9 +15,11 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLCornerTextDisplayableManager.h"
+#include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLSliceLogic.h"
 
 // MRML includes
+#include <valarray>
 #include <vtkMRMLNode.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLSliceNode.h>
@@ -29,6 +31,7 @@
 #include <vtkSetGet.h>
 #include <vtkCallbackCommand.h>
 #include <vtkCornerAnnotation.h>
+#include <vtkSmartPointer.h>
 #include <vtkTextProperty.h>
 #include <vtkEventBroker.h>
 #include <vtkRenderer.h>
@@ -65,7 +68,6 @@ public:
 
 private:
   vtkMRMLCornerTextDisplayableManager *External;
-  bool AddingNode;
 };
 
 //---------------------------------------------------------------------------
@@ -74,7 +76,7 @@ private:
 //---------------------------------------------------------------------------
 vtkMRMLCornerTextDisplayableManager::vtkInternal::vtkInternal(
     vtkMRMLCornerTextDisplayableManager *external)
-    : External(external), AddingNode(false) {}
+    : External(external) {}
 
 //---------------------------------------------------------------------------
 vtkMRMLCornerTextDisplayableManager::vtkInternal::~vtkInternal()
@@ -149,21 +151,22 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
           printWarnings);
   for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
-    if (this->GetLocationEnabled(idx))
-    {
-      cornerAnnotation->SetText(idx, generatedText[idx].c_str());
-      cornerAnnotation->GetTextProperty()->SetFontSize(cornerTextLogic->GetFontSize());
-      if (cornerTextLogic->GetFontFamily() == "Arial")
-      {
-        cornerAnnotation->GetTextProperty()->SetFontFamilyToArial();
-      }
-      else // times is the default, but the font family should be == "Times"
-      {
-        cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
-      }
-    }
+    cornerAnnotation->SetText(idx, this->GetLocationEnabled(idx) ? generatedText[idx].c_str() : "");
   }
-  return;
+
+  if (cornerTextLogic->GetFontFamily() == "Arial")
+  {
+    cornerAnnotation->GetTextProperty()->SetFontFamilyToArial();
+  }
+  else
+  {
+    cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
+  }
+  cornerAnnotation->SetMinimumFontSize(cornerTextLogic->GetFontSize());
+  cornerAnnotation->SetMaximumFontSize(cornerTextLogic->GetFontSize());
+  cornerAnnotation->SetNonlinearFontScaleFactor(1);
+
+  this->External->RequestRender();
 }
 
 //---------------------------------------------------------------------------
@@ -209,9 +212,13 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
     return;
   }
 
+  if (vtkMRMLCornerTextLogic::SafeDownCast(caller) != nullptr)
+  {
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
+  }
   if (vtkMRMLSliceLogic::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(false);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
   }
 
   this->Superclass::ProcessMRMLLogicsEvents(caller, event, callData);
@@ -258,12 +265,34 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess()
 }
 
 //---------------------------------------------------------------------------
+void vtkMRMLCornerTextDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
+{
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
+}
+
+//---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::Create() 
 {
   vtkMRMLSliceLogic *sliceLogic =
       this->GetMRMLApplicationLogic()->GetSliceLogic(this->GetMRMLSliceNode());
+  if (sliceLogic == nullptr)
+  {
+    vtkErrorWithObjectMacro(
+        sliceLogic, "vtkMRMLCornerTextDisplayableManager::Create() failed: invalid sliceLogic.");
+    return;
+  }
   vtkEventBroker::GetInstance()->AddObservation(
       sliceLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+
+  vtkMRMLCornerTextLogic *cornerTextLogic = this->GetMRMLApplicationLogic()->GetCornerTextLogic();
+  if (cornerTextLogic == nullptr)
+  {
+    vtkErrorWithObjectMacro(
+        cornerTextLogic, "vtkMRMLCornerTextDisplayableManager::Create() failed: invalid cornerTextLogic.");
+    return;
+  }
+  vtkEventBroker::GetInstance()->AddObservation(
+      cornerTextLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
 
   // As our slice logic callback does not generate warnings, we want to do an
   // initial render with warnings printed.

@@ -18,6 +18,7 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
+#include "vtkMRMLCornerTextLogic.h"
 #include "vtkSlicerCornerTextModuleMRMLDisplayableManagerExport.h"
 
 /// \brief Displayable manager for showing annotations in slice (2D) views.
@@ -49,6 +50,7 @@ protected:
 
   void OnMRMLSceneStartClose() override;
   void OnMRMLSceneEndClose() override;
+  void OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller) override;
 
   void OnMRMLSceneEndBatchProcess() override;
 
