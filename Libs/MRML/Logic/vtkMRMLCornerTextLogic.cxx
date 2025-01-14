@@ -355,62 +355,54 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLCornerTextLogic::ToggleLocation(vtkMRMLSliceNode* sliceNode,
+bool vtkMRMLCornerTextLogic::ToggleLocation(vtkMRMLSliceNode* sliceNode, // setcornertextenabled
     TextLocation location, bool enabled)
 {
   if (location < TextLocation_Last)
   {
     switch (location)
     {
-      case CORNER_BL: 
+      case CORNER_BL:
       {
-        enabled ? sliceNode->BottomLeftTextEnabledOn()
-                : sliceNode->BottomLeftTextEnabledOff();
+        sliceNode->SetBottomLeftTextEnabled(enabled);
         break;
       }
-      case CORNER_BR: 
+      case CORNER_BR:
       {
-        enabled ? sliceNode->BottomRightTextEnabledOn()
-                : sliceNode->BottomRightTextEnabledOff();
+        sliceNode->SetBottomRightTextEnabled(enabled);
         break;
       }
-      case CORNER_TL: 
+      case CORNER_TL:
       {
-        enabled ? sliceNode->TopLeftTextEnabledOn()
-                : sliceNode->TopLeftTextEnabledOff();
+        sliceNode->SetTopLeftTextEnabled(enabled);
         break;
       }
-      case CORNER_TR: 
+      case CORNER_TR:
       {
-        enabled ? sliceNode->TopRightTextEnabledOn()
-                : sliceNode->TopRightTextEnabledOff();
+        sliceNode->SetTopRightTextEnabled(enabled);
         break;
       }
-      case EDGE_B: 
+      case EDGE_B:
       {
-        enabled ? sliceNode->BottomEdgeTextEnabledOn()
-                : sliceNode->BottomEdgeTextEnabledOff();
+        sliceNode->SetBottomEdgeTextEnabled(enabled);
         break;
       }
-      case EDGE_R: 
+      case EDGE_R:
       {
-        enabled ? sliceNode->RightEdgeTextEnabledOn()
-                : sliceNode->RightEdgeTextEnabledOff();
+        sliceNode->SetRightEdgeTextEnabled(enabled);
         break;
       }
-      case EDGE_L: 
+      case EDGE_L:
       {
-        enabled ? sliceNode->LeftEdgeTextEnabledOn()
-                : sliceNode->LeftEdgeTextEnabledOff();
+        sliceNode->SetLeftEdgeTextEnabled(enabled);
         break;
       }
-      case EDGE_T: 
+      case EDGE_T:
       {
-        enabled ? sliceNode->TopEdgeTextEnabledOn()
-                : sliceNode->TopEdgeTextEnabledOff();
+        sliceNode->SetTopEdgeTextEnabled(enabled);
         break;
       }
-      default: 
+      default:
       {
         break;
       }

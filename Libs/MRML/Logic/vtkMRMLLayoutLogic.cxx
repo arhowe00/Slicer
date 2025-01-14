@@ -1966,12 +1966,13 @@ void vtkMRMLLayoutLogic::UpdateViewCornerAnnotations()
       vtkMRMLSliceNode* view = vtkMRMLSliceNode::SafeDownCast(item);
       // TODO: Why is view sometimes returning nullptr here?
       if (view != nullptr)
+      {
         view->SetAndObserveCornerAnnotationsTextNode(
             vtkMRMLCornerTextLogic::GetCornerAnnotations(
                 this->GetMRMLScene(), this->GetLayoutNode()->GetViewArrangement(),
                 view->GetName()));
+      }
   }
-  return;
 }
 
 //----------------------------------------------------------------------------
