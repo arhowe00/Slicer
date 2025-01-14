@@ -198,6 +198,18 @@ void vtkMRMLCornerTextDisplayableManager::PrintSelf(ostream &os,
 void vtkMRMLCornerTextDisplayableManager::ProcessMRMLNodesEvents(
     vtkObject *caller, unsigned long event, void *callData) 
 {
+  vtkMRMLScene* scene = this->GetMRMLScene();
+
+  if (scene == nullptr || scene->IsBatchProcessing()) 
+  {
+    return;
+  }
+
+  if (vtkMRMLTextNode::SafeDownCast(caller) != nullptr)
+  {
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ true);
+  }
+
   this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
 }
 
@@ -273,6 +285,7 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::Create() 
 {
+  // Observe the slice logic
   vtkMRMLSliceLogic *sliceLogic =
       this->GetMRMLApplicationLogic()->GetSliceLogic(this->GetMRMLSliceNode());
   if (sliceLogic == nullptr)
@@ -284,6 +297,7 @@ void vtkMRMLCornerTextDisplayableManager::Create()
   vtkEventBroker::GetInstance()->AddObservation(
       sliceLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
 
+  // Observe the corner text logic
   vtkMRMLCornerTextLogic *cornerTextLogic = this->GetMRMLApplicationLogic()->GetCornerTextLogic();
   if (cornerTextLogic == nullptr)
   {
@@ -293,6 +307,17 @@ void vtkMRMLCornerTextDisplayableManager::Create()
   }
   vtkEventBroker::GetInstance()->AddObservation(
       cornerTextLogic, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+
+  // Observe the text node
+  vtkMRMLTextNode *textNode = this->GetMRMLSliceNode()->GetCornerAnnotationsTextNode();
+  if (textNode == nullptr)
+  {
+    vtkErrorWithObjectMacro(
+        cornerTextLogic, "vtkMRMLCornerTextDisplayableManager::Create() failed: invalid textNode.");
+    return;
+  }
+  vtkEventBroker::GetInstance()->AddObservation(
+      textNode, vtkCommand::ModifiedEvent, this, this->GetMRMLNodesCallbackCommand());
 
   // As our slice logic callback does not generate warnings, we want to do an
   // initial render with warnings printed.
