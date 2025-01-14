@@ -83,7 +83,8 @@ void qSlicerCornerTextModuleWidget::setup()
 
   d->FooBar->setLayoutLogic(
       qSlicerApplication::application()->layoutManager()->layoutLogic());
-  d->FooBar->setCornerTextLogic(qSlicerApplication::application()
+
+  d->FooBar->setAndObserveCornerTextLogic(qSlicerApplication::application()
                                     ->applicationLogic()
                                     ->GetCornerTextLogic());
 }

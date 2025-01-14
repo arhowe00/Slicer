@@ -47,7 +47,7 @@ public:
   void setLayoutLogic(vtkMRMLLayoutLogic*);
 
   vtkMRMLCornerTextLogic* cornerTextLogic() const;
-  void setCornerTextLogic(vtkMRMLCornerTextLogic*);
+  void setAndObserveCornerTextLogic(vtkMRMLCornerTextLogic*);
 
 protected slots:
 
@@ -61,6 +61,8 @@ protected slots:
   void setDICOMAnnotationsPersistence(bool enable);
 
   void onLayoutLogicModifiedEvent();
+  // To sync with logic when modified & when application starts up
+  void updateWidgetFromCornerTextLogic();
 
 protected:
   QScopedPointer<qSlicerCornerTextFooBarWidgetPrivate> d_ptr;

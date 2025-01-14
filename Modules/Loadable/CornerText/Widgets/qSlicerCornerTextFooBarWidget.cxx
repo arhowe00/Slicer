@@ -104,6 +104,7 @@ void qSlicerCornerTextFooBarWidgetPrivate
   this->dicomAnnotationsCollapsibleGroupBox->setEnabled(false);
   QObject::connect(this->backgroundPersistenceCheckBox, SIGNAL(toggled(bool)), q, SLOT(setDICOMAnnotationsPersistence(bool)));
 
+  q->updateWidgetFromCornerTextLogic();
 }
 
 bool qSlicerCornerTextFooBarWidgetPrivate::ToggleLocation(vtkMRMLCornerTextLogic::TextLocation location, bool enabled)
@@ -283,5 +284,57 @@ void qSlicerCornerTextFooBarWidget::setLayoutLogic(vtkMRMLLayoutLogic* newLayout
   this->onLayoutLogicModifiedEvent();
 }
 
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::setAndObserveCornerTextLogic(vtkMRMLCornerTextLogic* cornerTextLogic)
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+
+  qvtkReconnect(d->LayoutLogic, cornerTextLogic, vtkCommand::ModifiedEvent,
+                   this, SLOT(onLayoutLogicModifiedEvent()));
+
+  d->CornerTextLogic = cornerTextLogic;
+  this->updateWidgetFromCornerTextLogic();
+}
+
 CTK_GET_CPP(qSlicerCornerTextFooBarWidget, vtkMRMLCornerTextLogic*, cornerTextLogic, CornerTextLogic)
-CTK_SET_CPP(qSlicerCornerTextFooBarWidget, vtkMRMLCornerTextLogic*, setCornerTextLogic, CornerTextLogic);
+
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextFooBarWidget::updateWidgetFromCornerTextLogic()
+{
+  Q_D(qSlicerCornerTextFooBarWidget);
+
+  if (!d->CornerTextLogic)
+  {
+    return;
+  }
+
+  // Presumably from DataProbe settings
+
+  d->sliceViewAnnotationsCheckBox->setChecked(d->CornerTextLogic->GetSliceViewAnnotationsEnabled());
+  (d->CornerTextLogic->GetFontFamily() == "Arial") ? d->arialFontRadioButton->toggle() : d->timesFontRadioButton->toggle();
+  d->fontSizeSpinBox->setValue(d->CornerTextLogic->GetFontSize());
+
+  switch (d->CornerTextLogic->GetDisplayStrictness())
+  {
+    case 1:
+    {
+      d->level1RadioButton->toggle();
+      break;
+    }
+    case 2:
+    {
+      d->level2RadioButton->toggle();
+      break;
+    }
+    case 3:
+    {
+      d->level3RadioButton->toggle();
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
+}
