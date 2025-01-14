@@ -67,7 +67,8 @@ void qSlicerCornerTextFooBarWidgetPrivate
 
   QObject::connect(this->sliceViewAnnotationsCheckBox, SIGNAL(toggled(bool)), q, SLOT(enableSliceViewAnnotations(bool)));
 
-  // Corner Text Annotation ctk collapsible button panel
+  // Corner Text Annotation ctk collapsible button pane.
+  this->sliceViewAnnotationsCheckBox->setChecked(true);
   this->cornerTextParametersCollapsibleButton->setEnabled(true);
 
   QObject::connect(this->topLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTopLeftCornerActive(bool)));
@@ -161,8 +162,10 @@ void qSlicerCornerTextFooBarWidget::enableSliceViewAnnotations(bool enable)
   {
     return;
   }
-  // TODO: Not supported yet.
-  // d->CornerTextLogic->EnableSliceViewAnnotations(enable);
+  // For graying out the section in the GUI
+  d->cornerTextParametersCollapsibleButton->setEnabled(enable);
+  // For informing the logic that it should not generate annotations
+  d->CornerTextLogic->SetSliceViewAnnotationsEnabled(enable);
 }
 
 //-----------------------------------------------------------------------------

@@ -168,6 +168,11 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
                                               bool printWarnings)
 {
   std::array<std::string, 8> cornerAnnotations{};
+  if (!this->SliceViewAnnotationsEnabled)
+  {
+    return cornerAnnotations;
+  }
+
   if (!sliceNode || !textNode)
   {
     if (printWarnings)

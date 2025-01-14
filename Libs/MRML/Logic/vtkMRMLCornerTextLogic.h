@@ -74,6 +74,10 @@ public:
                                                 bool printWarnings = true);
   bool ToggleLocation(vtkMRMLSliceNode*, TextLocation, bool enabled);
 
+  vtkGetMacro(SliceViewAnnotationsEnabled, bool);
+  vtkSetMacro(SliceViewAnnotationsEnabled, bool);
+  vtkBooleanMacro(SliceViewAnnotationsEnabled, bool);
+
   vtkGetMacro(DisplayStrictness, int);
   vtkSetMacro(DisplayStrictness, int);
 
@@ -116,6 +120,7 @@ private:
   /// actual string intended to be rendered on a given slice view.
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
 
+  bool SliceViewAnnotationsEnabled{true};
   int DisplayStrictness, FontSize;
   std::string FontFamily;
   std::unordered_map<
