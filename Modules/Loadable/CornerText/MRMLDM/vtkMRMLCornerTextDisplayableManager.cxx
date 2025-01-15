@@ -66,6 +66,8 @@ public:
   bool GetLocationEnabled(int);
   vtkMRMLTextNode *GetTextNode();
 
+  // vtkSmartPointer<vtkMRMLCornerTextLogic> CornerTextLogic;
+
   vtkCornerAnnotation* CornerAnnotation;
 
 private:
@@ -347,3 +349,19 @@ void vtkMRMLCornerTextDisplayableManager::Create()
 
   this->SetUpdateFromMRMLRequested(true);
 }
+
+// in the setconertextlgi, you would set and observe the cornertextlogic we
+// have a routine to unset and .  Check somewhere.  We might have done it with
+// the mrml scene.  Also observe the slice node.
+////---------------------------------------------------------------------------
+//vtkMRMLCornerTextLogic* vtkMRMLCornerTextDisplayableManager::GetCornerTextLogic() const
+//{
+//  return this->Internal->CornerTextLogic;
+//};
+//
+////---------------------------------------------------------------------------
+// void SetCornerTextLogic(vtkMRMLCornerTextLogic*)
+//{
+//
+//};
+//
