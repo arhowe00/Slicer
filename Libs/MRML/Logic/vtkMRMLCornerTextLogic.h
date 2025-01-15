@@ -72,11 +72,25 @@ public:
   std::array<std::string, 8> GenerateAnnotations(vtkMRMLSliceNode *,
                                                 vtkMRMLTextNode *,
                                                 bool printWarnings = true);
-  bool ToggleLocation(vtkMRMLSliceNode*, TextLocation, bool enabled);
+  bool ToggleLocationInSliceNode(vtkMRMLSliceNode*, TextLocation, bool enabled);
 
   vtkGetMacro(SliceViewAnnotationsEnabled, bool);
   vtkSetMacro(SliceViewAnnotationsEnabled, bool);
   vtkBooleanMacro(SliceViewAnnotationsEnabled, bool);
+
+  // TODO: These flags should be ultimately maintained by the slice nodes
+
+  vtkGetMacro(BottomLeftEnabled, bool);
+  vtkSetMacro(BottomLeftEnabled, bool);
+  vtkBooleanMacro(BottomLeftEnabled, bool);
+
+  vtkGetMacro(TopLeftEnabled, bool);
+  vtkSetMacro(TopLeftEnabled, bool);
+  vtkBooleanMacro(TopLeftEnabled, bool);
+
+  vtkGetMacro(TopRightEnabled, bool);
+  vtkSetMacro(TopRightEnabled, bool);
+  vtkBooleanMacro(TopRightEnabled, bool);
 
   vtkGetMacro(DisplayStrictness, int);
   vtkSetMacro(DisplayStrictness, int);
@@ -121,6 +135,7 @@ private:
   vtkXMLDataElement* ParseTextNode(vtkMRMLTextNode*);
 
   bool SliceViewAnnotationsEnabled{true};
+  bool BottomLeftEnabled{true}, TopLeftEnabled{true}, TopRightEnabled{true};
   int DisplayStrictness, FontSize;
   std::string FontFamily;
   std::unordered_map<

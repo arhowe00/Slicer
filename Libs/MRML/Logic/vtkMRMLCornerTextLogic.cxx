@@ -360,7 +360,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
 }
 
 //---------------------------------------------------------------------------
-bool vtkMRMLCornerTextLogic::ToggleLocation(vtkMRMLSliceNode* sliceNode, // setcornertextenabled
+bool vtkMRMLCornerTextLogic::ToggleLocationInSliceNode(vtkMRMLSliceNode* sliceNode, // setcornertextenabled
     TextLocation location, bool enabled)
 {
   if (location < TextLocation_Last)

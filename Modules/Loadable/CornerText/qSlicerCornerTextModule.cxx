@@ -120,23 +120,15 @@ void qSlicerCornerTextModule::readSettings() const
   vtkMRMLCornerTextLogic *cornerTextLogic =
       this->appLogic()->GetCornerTextLogic();
 
+  cornerTextLogic->SetSliceViewAnnotationsEnabled(settings->value("DataProbe/sliceViewAnnotations.enabled", 1).toBool());
   cornerTextLogic->SetDisplayStrictness(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
   cornerTextLogic->SetFontSize(settings->value("DataProbe/sliceViewAnnotations.fontSize", 14).toInt());
   cornerTextLogic->SetFontFamily(settings->value("DataProbe/sliceViewAnnotations.fontFamily", "Times").toString().toStdString());
 
-  // TODO: We have to read the settings
-  // cornerTextLogic->ToggleLocationGlobally(
-  //     vtkMRMLCornerTextLogic::CORNER_BL,
-  //     settings->value("DataProbe/sliceViewAnnotations.bottomLeft", "1")
-  //         .toBool());
-  // cornerTextLogic->ToggleLocationGlobally(
-  //     vtkMRMLCornerTextLogic::CORNER_TL,
-  //     settings->value("DataProbe/sliceViewAnnotations.topLeft", "1").toBool());
-  // cornerTextLogic->ToggleLocationGlobally(
-  //     vtkMRMLCornerTextLogic::CORNER_TR,
-  //     settings->value("DataProbe/sliceViewAnnotations.topRight", "1").toBool());
-
-  return;
+  // TODO: Remove from CornerTextLogic
+  cornerTextLogic->SetBottomLeftEnabled(settings->value("DataProbe/sliceViewAnnotations.bottomLeft", "1").toBool());
+  cornerTextLogic->SetTopLeftEnabled(settings->value("DataProbe/sliceViewAnnotations.topLeft", "1").toBool());
+  cornerTextLogic->SetTopRightEnabled(settings->value("DataProbe/sliceViewAnnotations.topRight", "1").toBool());
 }
 
 //-----------------------------------------------------------------------------

@@ -99,13 +99,22 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
   switch (location) 
   {
   case vtkMRMLCornerTextLogic::CORNER_BL:
-    return this->External->GetMRMLSliceNode()->GetBottomLeftTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetBottomLeftTextEnabled() &&
+           this->External->GetMRMLApplicationLogic()
+               ->GetCornerTextLogic()
+               ->GetBottomLeftEnabled();
   case vtkMRMLCornerTextLogic::CORNER_BR:
     return this->External->GetMRMLSliceNode()->GetBottomRightTextEnabled();
   case vtkMRMLCornerTextLogic::CORNER_TL:
-    return this->External->GetMRMLSliceNode()->GetTopLeftTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetTopLeftTextEnabled() &&
+           this->External->GetMRMLApplicationLogic()
+               ->GetCornerTextLogic()
+               ->GetBottomLeftEnabled();
   case vtkMRMLCornerTextLogic::CORNER_TR:
-    return this->External->GetMRMLSliceNode()->GetTopRightTextEnabled();
+    return this->External->GetMRMLSliceNode()->GetTopRightTextEnabled() &&
+           this->External->GetMRMLApplicationLogic()
+               ->GetCornerTextLogic()
+               ->GetTopRightEnabled();
   case vtkMRMLCornerTextLogic::EDGE_B:
     return this->External->GetMRMLSliceNode()->GetBottomEdgeTextEnabled();
   case vtkMRMLCornerTextLogic::EDGE_R:

@@ -71,9 +71,9 @@ void qSlicerCornerTextSettingsWidgetPrivate
   this->sliceViewAnnotationsCheckBox->setChecked(true);
   this->cornerTextParametersCollapsibleButton->setEnabled(true);
 
+  QObject::connect(this->bottomLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setBottomLeftCornerActive(bool)));
   QObject::connect(this->topLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTopLeftCornerActive(bool)));
   QObject::connect(this->topRightCheckBox, SIGNAL(toggled(bool)), q, SLOT(setTopRightCornerActive(bool)));
-  QObject::connect(this->bottomLeftCheckBox, SIGNAL(toggled(bool)), q, SLOT(setBottomLeftCornerActive(bool)));
 
   // Amount subpanel
   this->annotationsAmountGroupBox->setEnabled(true);
@@ -106,34 +106,6 @@ void qSlicerCornerTextSettingsWidgetPrivate
 
   q->updateWidgetFromCornerTextLogic();
 }
-
-bool qSlicerCornerTextSettingsWidgetPrivate::ToggleLocation(vtkMRMLCornerTextLogic::TextLocation location, bool enabled)
-{  
-  Q_Q(qSlicerCornerTextSettingsWidget);
-  vtkMRMLScene* mrmlScene = q->mrmlScene();
-  if (mrmlScene == nullptr)
-  {
-    return false;
-  }
-
-  for (int i = 0; i < mrmlScene->GetNumberOfNodesByClass("vtkMRMLSliceNode"); ++i)
-  {
-      vtkMRMLNode* node = mrmlScene->GetNthNodeByClass(i, "vtkMRMLSliceNode");
-      if (node == nullptr)
-      {
-        return false;
-      }
-
-      vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
-      if (sliceNode == nullptr)
-      {
-        return false;
-      }
-
-      this->CornerTextLogic->ToggleLocation(sliceNode, location, enabled);
-  }
-  return true;
- }
 
 //-----------------------------------------------------------------------------
 // qSlicerCornerTextSettingsWidget methods
@@ -177,7 +149,8 @@ void qSlicerCornerTextSettingsWidget::setTopLeftCornerActive(bool enable)
   {
     return;
   }
-  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_TL, enable);
+  // TODO: Remove from CornerTextLogic
+  d->CornerTextLogic->SetTopLeftEnabled(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -188,7 +161,8 @@ void qSlicerCornerTextSettingsWidget::setTopRightCornerActive(bool enable)
   {
     return;
   }
-  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_TR, enable);
+  // TODO: Remove from CornerTextLogic
+  d->CornerTextLogic->SetTopRightEnabled(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -199,7 +173,8 @@ void qSlicerCornerTextSettingsWidget::setBottomLeftCornerActive(bool enable)
   {
     return;
   }
-  d->ToggleLocation(vtkMRMLCornerTextLogic::CORNER_BL, enable);
+  // TODO: Remove from CornerTextLogic
+  d->CornerTextLogic->SetBottomLeftEnabled(enable);
 }
 
 //-----------------------------------------------------------------------------
@@ -256,9 +231,9 @@ void qSlicerCornerTextSettingsWidget::onLayoutLogicModifiedEvent()
     return;
   }
 
+  setBottomLeftCornerActive(d->bottomLeftCheckBox->isChecked());
   setTopLeftCornerActive(d->topLeftCheckBox->isChecked());
   setTopRightCornerActive(d->topRightCheckBox->isChecked());
-  setBottomLeftCornerActive(d->bottomLeftCheckBox->isChecked());
 }
 
 CTK_GET_CPP(qSlicerCornerTextSettingsWidget, vtkMRMLLayoutLogic*, layoutLogic, LayoutLogic)
@@ -309,10 +284,13 @@ void qSlicerCornerTextSettingsWidget::updateWidgetFromCornerTextLogic()
     return;
   }
 
-  // Presumably from DataProbe settings
+  // From DataProbe settings
 
   d->sliceViewAnnotationsCheckBox->setChecked(d->CornerTextLogic->GetSliceViewAnnotationsEnabled());
+  d->cornerTextParametersCollapsibleButton->setEnabled(d->CornerTextLogic->GetSliceViewAnnotationsEnabled());
+
   (d->CornerTextLogic->GetFontFamily() == "Arial") ? d->arialFontRadioButton->toggle() : d->timesFontRadioButton->toggle();
+
   d->fontSizeSpinBox->setValue(d->CornerTextLogic->GetFontSize());
 
   switch (d->CornerTextLogic->GetDisplayStrictness())
@@ -337,4 +315,9 @@ void qSlicerCornerTextSettingsWidget::updateWidgetFromCornerTextLogic()
       break;
     }
   }
+
+  // TODO: Remove from CornerTextLogic
+  d->bottomLeftCheckBox->setChecked(d->CornerTextLogic->GetBottomLeftEnabled());
+  d->topLeftCheckBox->setChecked(d->CornerTextLogic->GetTopLeftEnabled());
+  d->topRightCheckBox->setChecked(d->CornerTextLogic->GetTopRightEnabled());
 }
