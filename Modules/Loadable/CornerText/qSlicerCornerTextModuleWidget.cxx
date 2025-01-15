@@ -64,7 +64,7 @@ void qSlicerCornerTextModuleWidget::setMRMLScene(vtkMRMLScene* scene)
 
   this->Superclass::setMRMLScene(scene);
 
-  d->FooBar->setMRMLScene(scene);
+  d->Settings->setMRMLScene(scene);
 }
 
 //-----------------------------------------------------------------------------
@@ -81,10 +81,10 @@ void qSlicerCornerTextModuleWidget::setup()
 
   this->Superclass::setup();
 
-  d->FooBar->setLayoutLogic(
+  d->Settings->setLayoutLogic(
       qSlicerApplication::application()->layoutManager()->layoutLogic());
 
-  d->FooBar->setAndObserveCornerTextLogic(qSlicerApplication::application()
+  d->Settings->setAndObserveCornerTextLogic(qSlicerApplication::application()
                                     ->applicationLogic()
                                     ->GetCornerTextLogic());
 }

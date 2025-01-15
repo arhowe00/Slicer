@@ -21,7 +21,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="qSlicerCornerTextFooBarWidget" name="FooBar" native="true"/>
+       <widget class="qSlicerCornerTextSettingsWidget" name="Settings" native="true"/>
       </item>
      </layout>
     </widget>
@@ -55,9 +55,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>qSlicerCornerTextFooBarWidget</class>
+   <class>qSlicerCornerTextSettingsWidget</class>
    <extends>QWidget</extends>
-   <header>qSlicerCornerTextFooBarWidget.h</header>
+   <header>qSlicerCornerTextSettingsWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

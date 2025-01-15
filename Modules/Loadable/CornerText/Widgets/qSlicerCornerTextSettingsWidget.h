@@ -15,13 +15,13 @@
 
 ==============================================================================*/
 
-#ifndef __qSlicerCornerTextFooBarWidget_h
-#define __qSlicerCornerTextFooBarWidget_h
+#ifndef __qSlicerCornerTextSettingsWidget_h
+#define __qSlicerCornerTextSettingsWidget_h
 
 // Qt includes
 #include <QWidget>
 
-// FooBar Widgets includes
+// Settings Widgets includes
 #include "ctkPimpl.h"
 #include "ctkVTKObject.h"
 #include "qMRMLWidget.h"
@@ -30,9 +30,9 @@
 #include "vtkMRMLLayoutLogic.h"
 #include "vtkMRMLCornerTextLogic.h"
 
-class qSlicerCornerTextFooBarWidgetPrivate;
+class qSlicerCornerTextSettingsWidgetPrivate;
 
-class Q_SLICER_MODULE_CORNERTEXT_WIDGETS_EXPORT qSlicerCornerTextFooBarWidget
+class Q_SLICER_MODULE_CORNERTEXT_WIDGETS_EXPORT qSlicerCornerTextSettingsWidget
   : public qMRMLWidget // just so we can implement setMRMLScene
 {
   Q_OBJECT
@@ -40,8 +40,8 @@ class Q_SLICER_MODULE_CORNERTEXT_WIDGETS_EXPORT qSlicerCornerTextFooBarWidget
 
 public:
   typedef qMRMLWidget Superclass;
-  qSlicerCornerTextFooBarWidget(QWidget *parent=0);
-  ~qSlicerCornerTextFooBarWidget() override;
+  qSlicerCornerTextSettingsWidget(QWidget *parent=0);
+  ~qSlicerCornerTextSettingsWidget() override;
 
   vtkMRMLLayoutLogic* layoutLogic() const;
   void setLayoutLogic(vtkMRMLLayoutLogic*);
@@ -55,7 +55,7 @@ protected slots:
   void setTopLeftCornerActive(bool enable);
   void setTopRightCornerActive(bool enable);
   void setBottomLeftCornerActive(bool enable);
-  void setAnnotationDisplayLevel(int level); // 1, 2, or 3
+  void setAnnotationDisplayLevel(int level);  // 1, 2, or 3
   void setFontFamily(const QString& fontFamily);
   void setFontSize(int fontSize);
   void setDICOMAnnotationsPersistence(bool enable);
@@ -65,11 +65,11 @@ protected slots:
   void updateWidgetFromCornerTextLogic();
 
 protected:
-  QScopedPointer<qSlicerCornerTextFooBarWidgetPrivate> d_ptr;
+  QScopedPointer<qSlicerCornerTextSettingsWidgetPrivate> d_ptr;
 
 private:
-  Q_DECLARE_PRIVATE(qSlicerCornerTextFooBarWidget);
-  Q_DISABLE_COPY(qSlicerCornerTextFooBarWidget);
+  Q_DECLARE_PRIVATE(qSlicerCornerTextSettingsWidget);
+  Q_DISABLE_COPY(qSlicerCornerTextSettingsWidget);
 };
 
 #endif

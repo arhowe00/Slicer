@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>qSlicerCornerTextFooBarWidget</class>
- <widget class="qMRMLWidget" name="qSlicerCornerTextFooBarWidget">
+ <class>qSlicerCornerTextSettingsWidget</class>
+ <widget class="qMRMLWidget" name="qSlicerCornerTextSettingsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
