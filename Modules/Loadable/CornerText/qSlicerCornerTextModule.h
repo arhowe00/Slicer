@@ -66,6 +66,7 @@ protected:
   vtkMRMLAbstractLogic* createLogic() override { return nullptr; };
 
   void readSettings() const;
+  void writeSettings() const;
 
 protected:
   QScopedPointer<qSlicerCornerTextModulePrivate> d_ptr;

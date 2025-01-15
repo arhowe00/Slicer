@@ -35,6 +35,7 @@
 // Qt includes
 #include <QSettings>
 #include <QObject>
+#include <QDebug>
 
 // MRML includes
 #include <vtkMRMLCornerTextLogic.h>
@@ -74,6 +75,7 @@ qSlicerCornerTextModule::qSlicerCornerTextModule(QObject* _parent)
 //-----------------------------------------------------------------------------
 qSlicerCornerTextModule::~qSlicerCornerTextModule()
 {
+  writeSettings();
 }
 
 //-----------------------------------------------------------------------------
@@ -129,6 +131,30 @@ void qSlicerCornerTextModule::readSettings() const
   cornerTextLogic->SetBottomLeftEnabled(settings->value("DataProbe/sliceViewAnnotations.bottomLeft", "1").toBool());
   cornerTextLogic->SetTopLeftEnabled(settings->value("DataProbe/sliceViewAnnotations.topLeft", "1").toBool());
   cornerTextLogic->SetTopRightEnabled(settings->value("DataProbe/sliceViewAnnotations.topRight", "1").toBool());
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerCornerTextModule::writeSettings() const
+{
+  QSettings* settings = qSlicerApplication::application()->settingsDialog()->settings();
+  vtkMRMLCornerTextLogic *cornerTextLogic =
+      this->appLogic()->GetCornerTextLogic();
+
+  if (!cornerTextLogic)
+  {
+    qWarning() << Q_FUNC_INFO << " failed: cornerTextLogic is invalid";
+    return;
+  }
+
+  settings->setValue("DataProbe/sliceViewAnnotations.enabled", cornerTextLogic->GetSliceViewAnnotationsEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetDisplayStrictness());
+  settings->setValue("DataProbe/sliceViewAnnotations.fontSize", cornerTextLogic->GetFontSize());
+  settings->setValue("DataProbe/sliceViewAnnotations.fontFamily", QString::fromStdString(cornerTextLogic->GetFontFamily()));
+
+  // TODO: Remove from DataProbeLogic
+  settings->setValue("DataProbe/sliceViewAnnotations.bottomLeft", cornerTextLogic->GetBottomLeftEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.topLeft", cornerTextLogic->GetTopLeftEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.topRight", cornerTextLogic->GetTopRightEnabled());
 }
 
 //-----------------------------------------------------------------------------
