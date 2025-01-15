@@ -56,7 +56,7 @@ protected slots:
   void onLayoutChanged(int);
 
 protected:
-  /// Initialize the module. Register the volumes reader/writer
+  /// Initialize the module
   void setup() override;
 
   /// Create and return the widget representation associated to this module
