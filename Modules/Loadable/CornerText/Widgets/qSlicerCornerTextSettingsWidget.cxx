@@ -264,7 +264,7 @@ void qSlicerCornerTextSettingsWidget::setAndObserveCornerTextLogic(vtkMRMLCorner
 {
   Q_D(qSlicerCornerTextSettingsWidget);
 
-  qvtkReconnect(d->LayoutLogic, cornerTextLogic, vtkCommand::ModifiedEvent,
+  qvtkReconnect(d->CornerTextLogic, cornerTextLogic, vtkCommand::ModifiedEvent,
                    this, SLOT(onLayoutLogicModifiedEvent()));
 
   d->CornerTextLogic = cornerTextLogic;
