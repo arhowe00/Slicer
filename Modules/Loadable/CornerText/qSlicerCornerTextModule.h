@@ -52,6 +52,9 @@ public:
   QStringList categories()const override;
   QStringList dependencies() const override;
 
+protected slots:
+  void onLayoutChanged(int);
+
 protected:
   /// Initialize the module. Register the volumes reader/writer
   void setup() override;

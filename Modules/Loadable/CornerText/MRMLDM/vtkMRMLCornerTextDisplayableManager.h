@@ -21,6 +21,9 @@
 #include "vtkMRMLCornerTextLogic.h"
 #include "vtkSlicerCornerTextModuleMRMLDisplayableManagerExport.h"
 
+// VTK includes
+#include <vtkCornerAnnotation.h>
+
 /// \brief Displayable manager for showing annotations in slice (2D) views.
 ///
 /// Displays annotations in corners & edges of slice views
@@ -34,6 +37,9 @@ public:
   static vtkMRMLCornerTextDisplayableManager* New();
   vtkTypeMacro(vtkMRMLCornerTextDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
+
+  vtkCornerAnnotation* GetCornerAnnotation() const;
+  void SetCornerAnnotation(vtkCornerAnnotation* cornerAnnotation) const;
 
 protected:
 

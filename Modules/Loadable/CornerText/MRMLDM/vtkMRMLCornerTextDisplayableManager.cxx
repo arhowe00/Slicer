@@ -66,6 +66,8 @@ public:
   bool GetLocationEnabled(int);
   vtkMRMLTextNode *GetTextNode();
 
+  vtkCornerAnnotation* CornerAnnotation;
+
 private:
   vtkMRMLCornerTextDisplayableManager *External;
 };
@@ -133,16 +135,14 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
     return;
   }
 
-  // Get vtkCornerAnnotation from slice widget
-  std::string sliceViewName = this->External->GetMRMLSliceNode()->GetLayoutName();
-  // This should be specific to each viewer and not shared between viewers.
-  // DM insantiates the corner annotation and associate with the renderer.
-  // TODO: Remove dependency on qSlicerApplication
-  vtkCornerAnnotation* cornerAnnotation =
-      qSlicerApplication::application()
-          ->layoutManager()
-          ->sliceWidget(QString::fromStdString(sliceViewName))
-          ->overlayCornerAnnotation();
+  // Make sure we have set CornerAnnotation
+  if (this->CornerAnnotation == nullptr)
+  {
+    vtkWarningWithObjectMacro(
+        this->External, "vtkMRMLCornerTextDisplayableManager::vtkInternal::"
+                        "UpdateCornerAnnotationsFromSliceNode() failed: invalid CornerAnnotation.");
+    return;
+  }
 
   const std::array<std::string, 8> generatedText =
       cornerTextLogic->GenerateAnnotations(
@@ -151,20 +151,20 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
           printWarnings);
   for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
-    cornerAnnotation->SetText(idx, this->GetLocationEnabled(idx) ? generatedText[idx].c_str() : "");
+    this->CornerAnnotation->SetText(idx, this->GetLocationEnabled(idx) ? generatedText[idx].c_str() : "");
   }
 
   if (cornerTextLogic->GetFontFamily() == "Arial")
   {
-    cornerAnnotation->GetTextProperty()->SetFontFamilyToArial();
+    this->CornerAnnotation->GetTextProperty()->SetFontFamilyToArial();
   }
   else
   {
-    cornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
+    this->CornerAnnotation->GetTextProperty()->SetFontFamilyToTimes();
   }
-  cornerAnnotation->SetMinimumFontSize(cornerTextLogic->GetFontSize());
-  cornerAnnotation->SetMaximumFontSize(cornerTextLogic->GetFontSize());
-  cornerAnnotation->SetNonlinearFontScaleFactor(1);
+  this->CornerAnnotation->SetMinimumFontSize(cornerTextLogic->GetFontSize());
+  this->CornerAnnotation->SetMaximumFontSize(cornerTextLogic->GetFontSize());
+  this->CornerAnnotation->SetNonlinearFontScaleFactor(1);
 
   this->External->RequestRender();
 }
@@ -173,6 +173,19 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
 // vtkMRMLCornerTextDisplayableManager methods
 
 //---------------------------------------------------------------------------
+
+vtkCornerAnnotation *
+vtkMRMLCornerTextDisplayableManager::GetCornerAnnotation() const
+{
+  return this->Internal->CornerAnnotation;
+}
+
+void vtkMRMLCornerTextDisplayableManager::SetCornerAnnotation(
+    vtkCornerAnnotation *cornerAnnotation) const
+{
+  this->Internal->CornerAnnotation = cornerAnnotation;
+}
+
 vtkMRMLCornerTextDisplayableManager::vtkMRMLCornerTextDisplayableManager() 
 {
   this->Internal = new vtkInternal(this);

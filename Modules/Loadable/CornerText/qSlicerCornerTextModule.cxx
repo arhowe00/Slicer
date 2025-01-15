@@ -18,21 +18,31 @@
 #include <vtkMRMLSliceViewDisplayableManagerFactory.h>
 
 // Slicer includes
-#include <vtkMRMLCornerTextLogic.h>
 #include <vtkSlicerApplicationLogic.h>
 #include "qSlicerApplication.h"
+#include "qSlicerLayoutManager.h"
 
 // CornerText includes
 #include "qSlicerCornerTextModule.h"
 #include "qSlicerCornerTextModuleWidget.h"
+#include "vtkMRMLAbstractDisplayableManager.h"
+#include "vtkMRMLCornerTextDisplayableManager.h"
 #include "vtkMRMLDefaultAnnotationPropertyValueProvider.h"
-#include "vtkMRMLNode.h"
 
 // DisplayableManager initialization
 #include <vtkAutoInit.h>
 
 // Qt includes
 #include <QSettings>
+#include <QObject>
+
+// MRML includes
+#include <vtkMRMLCornerTextLogic.h>
+#include <qMRMLSliceWidget.h>
+#include <qMRMLSliceView.h>
+
+// VTK includes
+#include <vtkCornerAnnotation.h>
 
 VTK_MODULE_INIT(vtkSlicerCornerTextModuleMRMLDisplayableManager)
 
@@ -130,6 +140,34 @@ void qSlicerCornerTextModule::readSettings() const
 }
 
 //-----------------------------------------------------------------------------
+void qSlicerCornerTextModule::onLayoutChanged(int layout)
+{
+  foreach(const QString& sliceViewName, qSlicerApplication::application()->layoutManager()->sliceViewNames())
+    {
+    vtkCornerAnnotation *cornerAnnotation =
+        qSlicerApplication::application()
+            ->layoutManager()
+            ->sliceWidget(sliceViewName)
+            ->overlayCornerAnnotation();
+
+    vtkMRMLAbstractDisplayableManager* displayableManager =
+        qSlicerApplication::application()
+            ->layoutManager()
+            ->sliceWidget(sliceViewName)
+            ->sliceView()
+            ->displayableManagerByClassName("vtkMRMLCornerTextDisplayableManager");
+
+    vtkMRMLCornerTextDisplayableManager* cornerTextDisplayableManager;
+    if ((cornerTextDisplayableManager =
+            vtkMRMLCornerTextDisplayableManager::SafeDownCast(
+                displayableManager)))
+    {
+      cornerTextDisplayableManager->SetCornerAnnotation(cornerAnnotation);
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 void qSlicerCornerTextModule::setup()
 {
   this->Superclass::setup();
@@ -145,6 +183,13 @@ void qSlicerCornerTextModule::setup()
 
   // Read DataProbe settings
   this->readSettings();
+
+  // Observe layout manager (may not be available if running without main window)
+  if (qSlicerApplication::application()->layoutManager())
+  {
+    QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)),
+      this, SLOT(onLayoutChanged(int)));
+  }
 }
 
 //-----------------------------------------------------------------------------
