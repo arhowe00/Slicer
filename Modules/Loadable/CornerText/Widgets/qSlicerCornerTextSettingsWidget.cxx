@@ -39,7 +39,7 @@ public:
   virtual void setupUi(qSlicerCornerTextSettingsWidget*);
   void init();
   bool ToggleLocation(vtkMRMLCornerTextLogic::TextLocation, bool enabled);
-  
+
   vtkMRMLLayoutLogic* LayoutLogic;
   vtkMRMLCornerTextLogic* CornerTextLogic;
 };

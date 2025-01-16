@@ -102,7 +102,7 @@ vtkMRMLCornerTextLogic::ParseTextNode(vtkMRMLTextNode *textNode)
   parser->Parse();
 
   vtkXMLDataElement *root = parser->GetRootElement();
-  if (root == nullptr) 
+  if (root == nullptr)
   {
     vtkErrorWithObjectMacro(parser, "vtkMRMLCornerTextLogic::ParseTextNode: failed to parse layout description");
     return nullptr;
@@ -183,7 +183,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
   }
 
   if (textNode->GetText().size() <= 0) return cornerAnnotations;
-  
+
   // Parse <annotations> element
 
   vtkXMLDataElement* annotations = this->ParseTextNode(textNode);
@@ -353,7 +353,7 @@ vtkMRMLCornerTextLogic::GenerateAnnotations(vtkMRMLSliceNode *sliceNode,
     // once each property has been parsed, the annotation for that position
     // is fully specified
 
-    cornerAnnotations[location] += text; 
+    cornerAnnotations[location] += text;
   }
 
   return cornerAnnotations;

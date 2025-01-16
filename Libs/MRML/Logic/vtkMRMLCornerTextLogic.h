@@ -97,7 +97,7 @@ public:
 
   vtkGetMacro(FontSize, int);
   vtkSetMacro(FontSize, int);
-  
+
   vtkGetMacro(FontFamily, std::string);
   vtkSetMacro(FontFamily, std::string);
 

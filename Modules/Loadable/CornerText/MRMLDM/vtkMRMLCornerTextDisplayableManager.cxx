@@ -98,7 +98,7 @@ vtkMRMLCornerTextDisplayableManager::vtkInternal::GetTextNode()
 bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
     int location)
 {
-  switch (location) 
+  switch (location)
   {
   case vtkMRMLCornerTextLogic::CORNER_BL:
     return this->External->GetMRMLSliceNode()->GetBottomLeftTextEnabled() &&
@@ -197,13 +197,13 @@ void vtkMRMLCornerTextDisplayableManager::SetCornerAnnotation(
   this->Internal->CornerAnnotation = cornerAnnotation;
 }
 
-vtkMRMLCornerTextDisplayableManager::vtkMRMLCornerTextDisplayableManager() 
+vtkMRMLCornerTextDisplayableManager::vtkMRMLCornerTextDisplayableManager()
 {
   this->Internal = new vtkInternal(this);
 }
 
 //---------------------------------------------------------------------------
-vtkMRMLCornerTextDisplayableManager::~vtkMRMLCornerTextDisplayableManager() 
+vtkMRMLCornerTextDisplayableManager::~vtkMRMLCornerTextDisplayableManager()
 {
   delete this->Internal;
   this->Internal = nullptr;
@@ -211,7 +211,7 @@ vtkMRMLCornerTextDisplayableManager::~vtkMRMLCornerTextDisplayableManager()
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::PrintSelf(ostream &os,
-                                                    vtkIndent indent) 
+                                                    vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent
@@ -220,11 +220,11 @@ void vtkMRMLCornerTextDisplayableManager::PrintSelf(ostream &os,
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::ProcessMRMLNodesEvents(
-    vtkObject *caller, unsigned long event, void *callData) 
+    vtkObject *caller, unsigned long event, void *callData)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
-  if (scene == nullptr || scene->IsBatchProcessing()) 
+  if (scene == nullptr || scene->IsBatchProcessing())
   {
     return;
   }
@@ -239,11 +239,11 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLNodesEvents(
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
-    vtkObject* caller, unsigned long event, void *callData) 
+    vtkObject* caller, unsigned long event, void *callData)
 {
   vtkMRMLScene* scene = this->GetMRMLScene();
 
-  if (scene == nullptr || scene->IsBatchProcessing()) 
+  if (scene == nullptr || scene->IsBatchProcessing())
   {
     return;
   }
@@ -261,12 +261,12 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::UpdateFromMRML() 
+void vtkMRMLCornerTextDisplayableManager::UpdateFromMRML()
 {
   this->SetUpdateFromMRMLRequested(false);
 
   vtkMRMLScene *scene = this->GetMRMLScene();
-  if (!scene) 
+  if (!scene)
   {
     vtkDebugMacro("vtkMRMLCornerTextDisplayableManager->UpdateFromMRML: Scene "
                   "is not set.");
@@ -277,25 +277,25 @@ void vtkMRMLCornerTextDisplayableManager::UpdateFromMRML()
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::UnobserveMRMLScene() 
-{ 
-  return; 
+void vtkMRMLCornerTextDisplayableManager::UnobserveMRMLScene()
+{
+  return;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneStartClose() 
-{ 
-  return; 
+void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneStartClose()
+{
+  return;
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndClose() 
+void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndClose()
 {
   this->SetUpdateFromMRMLRequested(true);
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess() 
+void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess()
 {
   this->SetUpdateFromMRMLRequested(true);
 }
@@ -307,7 +307,7 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtk
 }
 
 //---------------------------------------------------------------------------
-void vtkMRMLCornerTextDisplayableManager::Create() 
+void vtkMRMLCornerTextDisplayableManager::Create()
 {
   // Observe the slice logic
   vtkMRMLSliceLogic *sliceLogic =

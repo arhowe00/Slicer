@@ -108,7 +108,7 @@ vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
   {
     output = std::to_string(sliceNode->GetSlabReconstructionType());
   }
-  
+
   if (output != "" && attributes.count("prefix"))
   {
     output = attributes.at("prefix") + output;

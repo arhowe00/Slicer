@@ -23,4 +23,3 @@ void vtkMRMLAbstractAnnotationPropertyValueProvider::PrintSelf(ostream& os, vtkI
 {
   this->Superclass::PrintSelf(os, indent);
 }
-
