@@ -39,12 +39,12 @@ class qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate;
 class Q_SLICER_QTMODULES_CORNERTEXT_EXPORT qSlicerCornerTextDICOMAnnotationPropertyValueProvider
   : public vtkMRMLAbstractAnnotationPropertyValueProvider
 {
-  // Q_OBJECT signals and slots not needed
 
 public:
 
   static qSlicerCornerTextDICOMAnnotationPropertyValueProvider* New();
-  qSlicerCornerTextDICOMAnnotationPropertyValueProvider(QWidget *parent=0);
+
+  qSlicerCornerTextDICOMAnnotationPropertyValueProvider();
   virtual ~qSlicerCornerTextDICOMAnnotationPropertyValueProvider();
 
   typedef vtkMRMLAbstractAnnotationPropertyValueProvider Superclass;

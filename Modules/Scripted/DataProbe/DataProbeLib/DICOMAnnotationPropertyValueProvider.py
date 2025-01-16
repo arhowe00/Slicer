@@ -1,11 +1,5 @@
-import os
-
-import qt
-import vtk
-
 import slicer
 
-from . import DataProbeUtil
 
 LAYER_FOREGROUND = 0
 LAYER_BACKGROUND = 1
@@ -43,6 +37,9 @@ class DICOMAnnotationPropertyValueProvider:
     @staticmethod
     def GetValueForPropertyName(propertyName, attributes, sliceNode):
 
+        if isinstance(sliceNode, str):
+            sliceNode = slicer.mrmlScene.GetNodeByID(sliceNode)
+
         # Do not attempt to retrieve dicom values if no local database exists
         if not slicer.dicomDatabase.isOpen:
             return ""
@@ -54,6 +51,7 @@ class DICOMAnnotationPropertyValueProvider:
 
         # Case I: Both background and foreground
         output = ""
+        uid = None
         if backgroundVolume is not None and foregroundVolume is not None:
             bgUids = backgroundVolume.GetAttribute("DICOM.instanceUIDs")
             fgUids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
@@ -98,6 +96,9 @@ class DICOMAnnotationPropertyValueProvider:
             if uids:
                 uid = uids.partition(" ")[0]
 
+        if uid == None:
+            return ""
+
         dicomDic = DICOMAnnotationPropertyValueProvider.extractDICOMValues(uid)
 
         if propertyName == "PatientName":
@@ -124,16 +125,16 @@ class DICOMAnnotationPropertyValueProvider:
             output += dicomDic["Model"]
         elif propertyName == "Patient-Position":
             output += dicomDic["Patient Position"]
-        elif propertyName == "MR":
+        elif propertyName == "MR" and dicomDic["Repetition Time"] != "":
             output += "TR: " + dicomDic["Repetition Time"]
-        elif propertyName == "TE":
+        elif propertyName == "TE" and dicomDic["Echo Time"] != "":
             output += "TE: " + dicomDic["Echo Time"]
 
         return output
 
     @staticmethod
     def GetSupportedProperties():
-        return {
+        return [
             "PatientName",
             "PatientID",
             "PatientInfo",
@@ -147,7 +148,7 @@ class DICOMAnnotationPropertyValueProvider:
             "Patient-Position",
             "TR",
             "TE",
-        }
+            ]
 
     # Implementation helper routines
     @staticmethod
@@ -182,6 +183,13 @@ class DICOMAnnotationPropertyValueProvider:
         studyM = time[2:4]
         studyS = time[4:6]
         return studyH + ":" + studyM + ":" + studyS + clockTime
+
+    @staticmethod
+    def makePatientInfo(dicomDic):
+        # This will give an string of patient's birth date,
+        # patient's age and sex
+        patientInfo = dicomDic["Patient Birth Date"] + ", " + dicomDic["Patient Age"] + ", " + dicomDic["Patient Sex"]
+        return patientInfo
 
     @staticmethod
     def extractDICOMValues(uid):

@@ -25,6 +25,7 @@
 // CornerText includes
 #include "qSlicerCornerTextModule.h"
 #include "qSlicerCornerTextModuleWidget.h"
+#include "qSlicerCornerTextDICOMAnnotationPropertyValueProvider.h"
 #include "vtkMRMLAbstractDisplayableManager.h"
 #include "vtkMRMLCornerTextDisplayableManager.h"
 #include "vtkMRMLDefaultAnnotationPropertyValueProvider.h"
@@ -36,6 +37,12 @@
 #include <QSettings>
 #include <QObject>
 #include <QDebug>
+
+// QtGUI includes
+#include <qSlicerApplication.h>
+#ifdef Slicer_USE_PYTHONQT
+#include <qSlicerPythonManager.h>
+#endif
 
 // MRML includes
 #include <vtkMRMLCornerTextLogic.h>
@@ -194,10 +201,10 @@ void qSlicerCornerTextModule::setup()
   vtkMRMLSliceViewDisplayableManagerFactory::GetInstance()->RegisterDisplayableManager("vtkMRMLCornerTextDisplayableManager");
 
   // Register default annotation provider
-  vtkNew<vtkMRMLDefaultAnnotationPropertyValueProvider> provider;
-  provider->SetAppLogic(this->appLogic());
+  vtkNew<vtkMRMLDefaultAnnotationPropertyValueProvider> defultProvider;
+  defultProvider->SetAppLogic(this->appLogic());
   this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider(
-      "Default", provider);
+      "Default", defultProvider);
 
   // Read DataProbe settings
   this->readSettings();
@@ -208,6 +215,13 @@ void qSlicerCornerTextModule::setup()
     QObject::connect(qSlicerApplication::application()->layoutManager(), SIGNAL(layoutChanged(int)),
       this, SLOT(onLayoutChanged(int)));
   }
+
+  // Register the DICOM property value provider
+#ifdef Slicer_USE_PYTHONQT
+  vtkNew<qSlicerCornerTextDICOMAnnotationPropertyValueProvider> DICOMProvider;
+  this->appLogic()->GetCornerTextLogic()->RegisterPropertyValueProvider(
+      "DICOM", DICOMProvider);
+#endif
 }
 
 //-----------------------------------------------------------------------------

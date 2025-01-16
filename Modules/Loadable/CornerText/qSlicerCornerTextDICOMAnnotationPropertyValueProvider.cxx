@@ -19,6 +19,8 @@
 
 // Slicer includes
 #include <vtkSlicerApplicationLogic.h>
+#include <qSlicerApplication.h>
+#include <qSlicerPythonManager.h>
 
 // CornerText includes
 #include "qSlicerCornerTextDICOMAnnotationPropertyValueProvider.h"
@@ -30,6 +32,8 @@
 #include <QSettings>
 #include <QObject>
 #include <QDebug>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 // MRML includes
 #include <vtkMRMLCornerTextLogic.h>
@@ -39,11 +43,15 @@
 // VTK includes
 #include <vtkCornerAnnotation.h>
 
+//---------------------------------------------------------------------------
+vtkStandardNewMacro(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
+
 //-----------------------------------------------------------------------------
 class qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate
 {
 public:
   qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate();
+  QJsonObject convertToJson(const std::unordered_map<std::string, std::string>& attributes);
 };
 
 //-----------------------------------------------------------------------------
@@ -55,10 +63,97 @@ qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate::qSlicerCornerTextD
 }
 
 //-----------------------------------------------------------------------------
+QJsonObject
+qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate::convertToJson(
+    const std::unordered_map<std::string, std::string> &attributes)
+{
+  QJsonObject jsonObject;
+  for (const auto& pair : attributes) {
+    jsonObject[QString::fromStdString(pair.first)] =
+        QString::fromStdString(pair.second);
+  }
+  return jsonObject;
+}
+
+//-----------------------------------------------------------------------------
 // qSlicerCornerTextDICOMAnnotationPropertyValueProvider methods
+
+//-----------------------------------------------------------------------------
+qSlicerCornerTextDICOMAnnotationPropertyValueProvider::
+    qSlicerCornerTextDICOMAnnotationPropertyValueProvider()
+    : d_ptr(new qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate)
+{
+  qSlicerApplication::application()->pythonManager()->executeString(
+      QString("from DataProbeLib import DICOMAnnotationPropertyValueProvider"));
+}
+
+//-----------------------------------------------------------------------------
+qSlicerCornerTextDICOMAnnotationPropertyValueProvider::~qSlicerCornerTextDICOMAnnotationPropertyValueProvider()
+{
+}
 
 //-----------------------------------------------------------------------------
 // void qSlicerCornerTextDICOMAnnotationPropertyValueProvider::setup()
 // {
 //   this->Superclass::setup();
 // }
+
+//-----------------------------------------------------------------------------
+bool qSlicerCornerTextDICOMAnnotationPropertyValueProvider::
+    CanProvideValueForPropertyName(const std::string &propertyName)
+{
+  Q_D(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
+
+  QString command = QString("DICOMAnnotationPropertyValueProvider."
+                            "DICOMAnnotationPropertyValueProvider."
+                            "CanProvideValueForPropertyName('%1')")
+                        .arg(QString::fromStdString(propertyName));
+  QVariant result = qSlicerApplication::application()->pythonManager()->executeString(command, ctkAbstractPythonManager::EvalInput);
+  return result.toBool();
+}
+
+//-----------------------------------------------------------------------------
+std::string
+qSlicerCornerTextDICOMAnnotationPropertyValueProvider::GetValueForPropertyName(
+    const std::string &propertyName, const XMLTagAttributes& attributes,
+    vtkMRMLSliceNode *sliceNode)
+{
+  Q_D(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
+
+  QJsonObject jsonAttributes = d->convertToJson(attributes);
+  QJsonDocument jsonDoc(jsonAttributes);
+  QString jsonString = QString::fromUtf8(jsonDoc.toJson(QJsonDocument::Compact));
+
+  // prepend a command that will get the slice node
+  QString command = QString("DICOMAnnotationPropertyValueProvider."
+                           "DICOMAnnotationPropertyValueProvider."
+                           "GetValueForPropertyName('%1', %2, '%3')")
+                         .arg(QString::fromStdString(propertyName))
+                         .arg(jsonString)
+                         .arg(sliceNode->GetID());
+  QVariant result = qSlicerApplication::application()->pythonManager()->executeString(command, ctkAbstractPythonManager::EvalInput);
+  return result.toString().toStdString();
+}
+
+//-----------------------------------------------------------------------------
+std::unordered_set<std::string>
+qSlicerCornerTextDICOMAnnotationPropertyValueProvider::
+    GetSupportedProperties()
+{
+  Q_D(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
+
+  QString command = QString("DICOMAnnotationPropertyValueProvider."
+                           "DICOMAnnotationPropertyValueProvider."
+                           "GetSupportedProperties()");
+  QVariant result = qSlicerApplication::application()->pythonManager()->executeString(command, ctkAbstractPythonManager::EvalInput);
+
+  QStringList stringList = result.toStringList();
+  std::unordered_set<std::string> supportedProperties;
+
+  for (const QString& str : stringList)
+  {
+    supportedProperties.insert(str.toStdString());
+  }
+
+  return supportedProperties;
+}
