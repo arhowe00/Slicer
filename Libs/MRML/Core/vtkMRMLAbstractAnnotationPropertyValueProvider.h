@@ -38,9 +38,9 @@ class vtkMRMLAbstractAnnotationPropertyValueProvider : public vtkObject
 public:
 
   // Typedefs
-
+  
   typedef std::unordered_map<std::string, std::string> XMLTagAttributes;
-
+  
   // Display levels
 
   enum DisplayLevel
@@ -51,7 +51,7 @@ public:
   };
 
   // Layers
-
+  
   enum Layer
   {
     LAYER_FOREGROUND = 0,
@@ -93,7 +93,7 @@ public:
       {
         return LAYER_FOREGROUND;
       }
-      else if (layer == "background" || getDigit(layer) == LAYER_BACKGROUND)
+      else if (layer == "background" || getDigit(layer) == LAYER_BACKGROUND) 
       {
         return LAYER_BACKGROUND;
       }

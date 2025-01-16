@@ -62,7 +62,8 @@ public:
   void UpdateDisplayableCornerText(vtkMRMLNode *node);
 
   // Slice Node
-  void UpdateCornerAnnotationsFromSliceNode(bool printWarnings = true);
+  void UpdateCornerAnnotationsFromSliceNode(bool printDMWarnings = true,
+                                            bool printLogicWarnings = true);
   bool GetLocationEnabled(int);
   vtkMRMLTextNode *GetTextNode();
 
@@ -130,7 +131,7 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
 
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::vtkInternal::
-    UpdateCornerAnnotationsFromSliceNode(bool printWarnings)
+    UpdateCornerAnnotationsFromSliceNode(bool printDMWarnings, bool printLogicWarnings)
 {
   // Get vtkMRMLCornerTextLogic
   vtkMRMLCornerTextLogic *cornerTextLogic =
@@ -147,9 +148,12 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
   // Make sure we have set CornerAnnotation
   if (this->CornerAnnotation == nullptr)
   {
-    vtkWarningWithObjectMacro(
-        this->External, "vtkMRMLCornerTextDisplayableManager::vtkInternal::"
-                        "UpdateCornerAnnotationsFromSliceNode() failed: invalid CornerAnnotation.");
+    if (printDMWarnings)
+    {
+      vtkWarningWithObjectMacro(
+          this->External, "vtkMRMLCornerTextDisplayableManager::vtkInternal::"
+                          "UpdateCornerAnnotationsFromSliceNode() failed: invalid CornerAnnotation.");
+    }
     return;
   }
 
@@ -157,7 +161,7 @@ void vtkMRMLCornerTextDisplayableManager::vtkInternal::
       cornerTextLogic->GenerateAnnotations(
           this->External->GetMRMLSliceNode(),
           this->GetTextNode(),
-          printWarnings);
+          printLogicWarnings);
   for (int idx = 0; idx < vtkMRMLCornerTextLogic::TextLocation_Last; ++idx)
   {
     this->CornerAnnotation->SetText(idx, this->GetLocationEnabled(idx) ? generatedText[idx].c_str() : "");
@@ -229,7 +233,7 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLNodesEvents(
 
   if (vtkMRMLTextNode::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ true);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ true);
   }
 
   this->Superclass::ProcessMRMLNodesEvents(caller, event, callData);
@@ -248,11 +252,11 @@ void vtkMRMLCornerTextDisplayableManager::ProcessMRMLLogicsEvents(
 
   if (vtkMRMLCornerTextLogic::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ false);
   }
   if (vtkMRMLSliceLogic::SafeDownCast(caller) != nullptr)
   {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ false);
   }
 
   this->Superclass::ProcessMRMLLogicsEvents(caller, event, callData);
@@ -301,7 +305,7 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess()
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printWarnings= */ false);
+    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ false);
 }
 
 //---------------------------------------------------------------------------
@@ -343,7 +347,7 @@ void vtkMRMLCornerTextDisplayableManager::Create()
 
   // As our slice logic callback does not generate warnings, we want to do an
   // initial render with warnings printed.
-  this->Internal->UpdateCornerAnnotationsFromSliceNode(true);
+  this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ false);
 
   this->SetUpdateFromMRMLRequested(true);
 }
