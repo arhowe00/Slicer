@@ -41,7 +41,7 @@ jobs:
 
       # Retrieve changes in SuperBuild-related files relative to the 'nightly-main' branch
       - name: "Detect SuperBuild Changes"
-        uses: tj-actions/changed-files@bab30c2299617f6615ec02a68b9a40d10bd21366 # v45.0.5
+        uses: tj-actions/changed-files@d6e91a2266cdb9d62096cebf1e8546899c6aa18f # v45.0.6
         id: superbuild-changes
         with:
           files: |
@@ -78,7 +78,7 @@ jobs:
       # Upload the Slicer package artifact if the build was successful
       - name: "Upload Slicer package"
         if: ${{ steps.slicer-build.outcome == 'success' }}
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
+        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: slicer-package
           path: ${{ github.workspace }}/${{ steps.slicer-build.outputs.package }}
