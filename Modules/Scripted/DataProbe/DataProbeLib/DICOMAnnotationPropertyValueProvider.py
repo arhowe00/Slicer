@@ -1,6 +1,6 @@
 import slicer
 
-
+LAYER_ANY = -1
 LAYER_FOREGROUND = 0
 LAYER_BACKGROUND = 1
 LAYER_LABEL = 2
@@ -13,7 +13,7 @@ class DICOMAnnotationPropertyValueProvider:
             layer = attributes["layer"]
 
             def get_digit(s):
-                return int(s) if s.isdigit() else -1
+                return int(s) if s.isdigit() else LAYER_ANY
 
             if layer == "foreground" or get_digit(layer) == LAYER_FOREGROUND:
                 return LAYER_FOREGROUND
@@ -21,7 +21,7 @@ class DICOMAnnotationPropertyValueProvider:
                 return LAYER_BACKGROUND
             elif layer == "label" or get_digit(layer) == LAYER_LABEL:
                 return LAYER_LABEL
-        return -1
+        return LAYER_ANY
 
     # A part of the default annotation provider, not abstract. We need a way to
     # get app logic
@@ -48,24 +48,24 @@ class DICOMAnnotationPropertyValueProvider:
         sliceLogic = DICOMAnnotationPropertyValueProvider.GetAppLogic().GetSliceLogic(sliceNode)
         backgroundVolume = sliceLogic.GetBackgroundLayer().GetVolumeNode()
         foregroundVolume = sliceLogic.GetForegroundLayer().GetVolumeNode()
+        layer_value = DICOMAnnotationPropertyValueProvider.GetLayerValueAsInteger(attributes)
 
         # Case I: Both background and foreground
         output = ""
         uid = None
-        if backgroundVolume is not None and foregroundVolume is not None:
+        if backgroundVolume != None and foregroundVolume != None:
             bgUids = backgroundVolume.GetAttribute("DICOM.instanceUIDs")
             fgUids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
             if bgUids and fgUids:
                 bgUid = bgUids.partition(" ")[0]
                 fgUid = fgUids.partition(" ")[0]
+                uid = bgUid  # bgUid used as default
 
                 backgroundDicomDic = DICOMAnnotationPropertyValueProvider.extractDICOMValues(bgUid)
                 foregroundDicomDic = DICOMAnnotationPropertyValueProvider.extractDICOMValues(fgUid)
 
-                if not DICOMAnnotationPropertyValueProvider.uidsMatch(bgUid, fgUid):
+                if not DICOMAnnotationPropertyValueProvider.dicsMatch(backgroundDicomDic, foregroundDicomDic):
                     return ""
-
-                backgroundDicomDic["Patient Birth Date"] = backgroundDicomDic["Patient Birth Date"]
 
                 properties = {
                     "SeriesDate": "Series Date",
@@ -75,23 +75,27 @@ class DICOMAnnotationPropertyValueProvider:
 
                 if propertyName in properties:
                     key = properties[propertyName]
+                    # If they don't match, we want to differentiate
                     if backgroundDicomDic[key] != foregroundDicomDic[key]:
-                        layer_value = DICOMAnnotationPropertyValueProvider.GetLayerValueAsInteger(attributes)
-                        if layer_value is LAYER_BACKGROUND:
+                        if layer_value == LAYER_BACKGROUND:
                             output = "B: " + output
-                        elif layer_value is LAYER_FOREGROUND:
+                        elif layer_value == LAYER_FOREGROUND:
                             output = "F: " + output
-
-                uid = bgUid  # Will be used for later down the line
-            elif bgUids:# and DICOMAnnotationPropertyValueProvider.backgroundDICOMAnnotationsPersistence:
+                            uid = fgUid
+                    elif layer_value == LAYER_FOREGROUND:
+                        # If they do match, we also want to return an empty string
+                        # for the foreground case, so we don't print the same thing
+                        # twice
+                        return ""
+            elif bgUids:  # and DICOMAnnotationPropertyValueProvider.backgroundDICOMAnnotationsPersistence:
                 uid = bgUids.partition(" ")[0]
             else:
                 return ""
-        elif backgroundVolume is not None:
+        elif backgroundVolume != None and (layer_value == LAYER_BACKGROUND or layer_value == LAYER_ANY):
             uids = backgroundVolume.GetAttribute("DICOM.instanceUIDs")
             if uids:
                 uid = uids.partition(" ")[0]
-        elif foregroundVolume is not None:
+        elif foregroundVolume != None and (layer_value == LAYER_FOREGROUND or layer_value == LAYER_ANY):
             uids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
             if uids:
                 uid = uids.partition(" ")[0]
@@ -102,7 +106,7 @@ class DICOMAnnotationPropertyValueProvider:
 
         if propertyName == "PatientName":
             output += dicomDic["Patient Name"].replace("^", ", ")
-        elif propertyName == "PatientID":
+        elif propertyName == "PatientID" and dicomDic["Patient ID"] != "":
             output += "ID: " + dicomDic["Patient ID"]
         elif propertyName == "PatientBirthDate":
             output += DICOMAnnotationPropertyValueProvider.formatDICOMDate(dicomDic["Patient Birth Date"])
@@ -116,7 +120,7 @@ class DICOMAnnotationPropertyValueProvider:
             output += dicomDic["Series Description"]
         elif propertyName == "InstitutionName":
             output += dicomDic["Institution Name"]
-        elif propertyName == "ReferringPhysician":
+        elif propertyName == "ReferringPhysician" and dicomDic["Referring Physician Name"] != "":
             output += dicomDic["Referring Physician Name"].replace("^", ", ")
         elif propertyName == "Manufacturer":
             output += dicomDic["Manufacturer"]
@@ -151,12 +155,12 @@ class DICOMAnnotationPropertyValueProvider:
 
     # Implementation helper routines
     @staticmethod
-    def uidsMatch(backgroundDicomDic, foregroundDicomDic):
-        return (
-            backgroundDicomDic["Patient Name"] == foregroundDicomDic["Patient Name"]
-            and backgroundDicomDic["Patient ID"] == foregroundDicomDic["Patient ID"]
-            and backgroundDicomDic["Patient Birth Date"] == foregroundDicomDic["Patient Birth Date"]
-        )
+    def dicsMatch(backgroundDicomDic, foregroundDicomDic):
+        patient_name_match = backgroundDicomDic["Patient Name"] == foregroundDicomDic["Patient Name"]
+        patient_id_match = backgroundDicomDic["Patient ID"] == foregroundDicomDic["Patient ID"]
+        birth_date_match = backgroundDicomDic["Patient Birth Date"] == foregroundDicomDic["Patient Birth Date"]
+
+        return patient_name_match and patient_id_match and birth_date_match
 
     @staticmethod
     def formatDICOMDate(date):

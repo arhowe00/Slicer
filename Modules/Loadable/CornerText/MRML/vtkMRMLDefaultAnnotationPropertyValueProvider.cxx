@@ -101,12 +101,15 @@ vtkMRMLDefaultAnnotationPropertyValueProvider::GetValueForPropertyName(
   else if (propertyName == "SlabReconstructionThickness" &&
              sliceNode->GetSlabReconstructionEnabled())
   {
-    output = std::to_string(sliceNode->GetSlabReconstructionThickness());
+    output =
+        (std::ostringstream() << std::fixed << std::setprecision(2)
+                              << sliceNode->GetSlabReconstructionThickness())
+            .str();
   }
   else if (propertyName == "SlabReconstructionType" &&
              sliceNode->GetSlabReconstructionEnabled())
   {
-    output = std::to_string(sliceNode->GetSlabReconstructionType());
+    output = sliceNode->GetSlabReconstructionTypeAsString(sliceNode->GetSlabReconstructionType());
   }
 
   if (output != "" && attributes.count("prefix"))

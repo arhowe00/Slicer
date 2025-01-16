@@ -403,7 +403,7 @@ class DataProbeInfoWidget:
         """
 
         # this method makes SliceView Annotation
-        self.sliceAnnotations = DataProbeLib.SliceAnnotations()
+        # self.sliceAnnotations = DataProbeLib.SliceAnnotations()
 
         # goto module button
         self.goToModule = qt.QPushButton("->", self.frame)
