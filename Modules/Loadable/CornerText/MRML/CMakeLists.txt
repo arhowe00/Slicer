@@ -7,8 +7,6 @@ set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT"
 set(${KIT}_SRCS
   vtkMRMLDefaultAnnotationPropertyValueProvider.cxx
   vtkMRMLDefaultAnnotationPropertyValueProvider.h
-  vtkMRMLDICOMAnnotationPropertyValueProvider.cxx
-  vtkMRMLDICOMAnnotationPropertyValueProvider.h
   )
 
 set(${KIT}_TARGET_LIBRARIES
