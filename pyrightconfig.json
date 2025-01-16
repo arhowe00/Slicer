@@ -1,0 +1,10 @@
+{
+  "typeCheckingMode": "off",
+  "reportUnusedVariable": false,
+  "reportUnusedFunction": false,
+  "reportIncompatibleVariableOverride": false,
+  "reportIncompatibleMethodOverride": false,
+  "useLibraryCodeForTypes": false,
+  "reportMissingImports": false,
+  "reportMissingTypeStubs": false
+}
