@@ -13,15 +13,21 @@
 
 ==============================================================================*/
 
-#ifndef __vtkMRMLDICOMAnnotationPropertyValueProvider_h
-#define __vtkMRMLDICOMAnnotationPropertyValueProvider_h
+#ifndef __qSlicerCornerTextDICOMAnnotationPropertyValueProvider_h
+#define __qSlicerCornerTextDICOMAnnotationPropertyValueProvider_h
+
+// Qt includes
+#include <QObject>
 
 // MRMLCore includes
-#include "vtkMRMLAbstractAnnotationPropertyValueProvider.h"
+#include <vtkMRMLAbstractAnnotationPropertyValueProvider.h>
+#include <vtkMRMLSliceNode.h>
+#include <vtkMRMLApplicationLogic.h>
 
 // CornerText includes
-#include "vtkMRMLApplicationLogic.h"
-#include "vtkSlicerCornerTextModuleMRMLExport.h"
+#include "qSlicerCornerTextModuleExport.h"
+
+class qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate;
 
 /// \brief The DICOM property value provider implemented for the CornerText
 /// loadable module.
@@ -30,15 +36,18 @@
 /// nodes. This is intended to replicate the behavior of 'DataProbe', a Scripted
 /// Loadable module
 ///
-class VTK_SLICER_CORNERTEXT_MODULE_MRML_EXPORT vtkMRMLDICOMAnnotationPropertyValueProvider
+class Q_SLICER_QTMODULES_CORNERTEXT_EXPORT qSlicerCornerTextDICOMAnnotationPropertyValueProvider
   : public vtkMRMLAbstractAnnotationPropertyValueProvider
 {
+  // Q_OBJECT signals and slots not needed
 
 public:
 
-  static vtkMRMLDICOMAnnotationPropertyValueProvider* New();
-  vtkTypeMacro(vtkMRMLDICOMAnnotationPropertyValueProvider, vtkMRMLAbstractAnnotationPropertyValueProvider);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  static qSlicerCornerTextDICOMAnnotationPropertyValueProvider* New();
+  qSlicerCornerTextDICOMAnnotationPropertyValueProvider(QWidget *parent=0);
+  virtual ~qSlicerCornerTextDICOMAnnotationPropertyValueProvider();
+
+  typedef vtkMRMLAbstractAnnotationPropertyValueProvider Superclass;
 
   bool CanProvideValueForPropertyName(const std::string &propertyName) override;
   std::string GetValueForPropertyName(const std::string &propertyName,
@@ -46,34 +55,13 @@ public:
                                       vtkMRMLSliceNode *) override;
   std::unordered_set<std::string> GetSupportedProperties() override;
 
-  vtkGetObjectMacro(AppLogic, vtkMRMLApplicationLogic);
-  vtkSetObjectMacro(AppLogic, vtkMRMLApplicationLogic);
-
 protected:
-
-  vtkMRMLDICOMAnnotationPropertyValueProvider() = default;
-  ~vtkMRMLDICOMAnnotationPropertyValueProvider() = default;
+  QScopedPointer<qSlicerCornerTextDICOMAnnotationPropertyValueProviderPrivate> d_ptr;
 
 private:
 
-  vtkMRMLDICOMAnnotationPropertyValueProvider(const vtkMRMLDICOMAnnotationPropertyValueProvider&) = delete;
-  void operator=(const vtkMRMLDICOMAnnotationPropertyValueProvider&) = delete;
-
-  const std::unordered_set<std::string> registeredProperties = {
-      "PatientName",
-      "PatientID",
-      "PatientInfo",
-      "SeriesDate",
-      "SeriesDescription",
-      "InstitutionName",
-      "ReferringPhysician",
-      "Manufacturer",
-      "Model",
-      "Patient-Position",
-      "TR",
-      "TE"};
-
-  vtkMRMLApplicationLogic* AppLogic;
+  Q_DECLARE_PRIVATE(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
+  Q_DISABLE_COPY(qSlicerCornerTextDICOMAnnotationPropertyValueProvider);
 };
 
 #endif
