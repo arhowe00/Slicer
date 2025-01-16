@@ -83,7 +83,7 @@ class DICOMAnnotationPropertyValueProvider:
                             output = "F: " + output
 
                 uid = bgUid  # Will be used for later down the line
-            elif bgUids and DICOMAnnotationPropertyValueProvider.backgroundDICOMAnnotationsPersistence:
+            elif bgUids:# and DICOMAnnotationPropertyValueProvider.backgroundDICOMAnnotationsPersistence:
                 uid = bgUids.partition(" ")[0]
             else:
                 return ""
@@ -95,8 +95,7 @@ class DICOMAnnotationPropertyValueProvider:
             uids = foregroundVolume.GetAttribute("DICOM.instanceUIDs")
             if uids:
                 uid = uids.partition(" ")[0]
-
-        if uid == None:
+        else:
             return ""
 
         dicomDic = DICOMAnnotationPropertyValueProvider.extractDICOMValues(uid)
