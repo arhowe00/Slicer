@@ -51,7 +51,6 @@ public:
     DropEventMethod,
   };
 
-  // an instance is created and used to make a brudge (declaremethod)
   mutable qSlicerPythonCppAPI PythonCppAPI;
 
   QString    PythonSourceFilePath;
@@ -225,19 +224,6 @@ bool qSlicerScriptedFileDialog::exec(const qSlicerIO::IOProperties& ioProperties
 }
 
 //-----------------------------------------------------------------------------
-// this function is in c++ but we want the implemention in python. Because we
-// expect the method to be provided in the python class, we looked it up, added
-// it to the map as a python function, we call the python method via
-// callPMethod.  Simple because this one below doesn't take params, however some
-// are more complicated.k
-//
-// In my class I'll have a class called vtkConventionForNamingOfPythonClass. If
-// I look at the filedialogue (this file), I can see an implementation example
-// of that.  I'm gonna loook at that, and there's a convention (when you look at
-// the source file, you want to grab the class based on its name.  If the module
-// is called DICOM, the provider should be called something like
-// "CornerTextDICOMValueProvider.  The thing that is variable is the name of the
-// module.
 bool qSlicerScriptedFileDialog::isMimeDataAccepted(const QMimeData* mimeData)const
 {
   Q_D(const qSlicerScriptedFileDialog);

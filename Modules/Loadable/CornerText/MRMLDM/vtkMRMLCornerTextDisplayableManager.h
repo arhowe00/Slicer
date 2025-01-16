@@ -38,9 +38,6 @@ public:
   vtkTypeMacro(vtkMRMLCornerTextDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-//  vtkMRMLCornerTextLogic* GetCornerTextLogic() const;
-//  void SetCornerTextLogic(vtkMRMLCornerTextLogic*);
-
   vtkCornerAnnotation* GetCornerAnnotation() const;
   void SetCornerAnnotation(vtkCornerAnnotation* cornerAnnotation) const;
 
