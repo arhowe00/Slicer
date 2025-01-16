@@ -100,30 +100,30 @@ bool vtkMRMLCornerTextDisplayableManager::vtkInternal::GetLocationEnabled(
   switch (location)
   {
   case vtkMRMLCornerTextLogic::CORNER_BL:
-    return this->External->GetMRMLSliceNode()->GetBottomLeftTextEnabled() &&
+    return true &&
            this->External->GetMRMLApplicationLogic()
                ->GetCornerTextLogic()
                ->GetBottomLeftEnabled();
   case vtkMRMLCornerTextLogic::CORNER_BR:
-    return this->External->GetMRMLSliceNode()->GetBottomRightTextEnabled();
+    return true;
   case vtkMRMLCornerTextLogic::CORNER_TL:
-    return this->External->GetMRMLSliceNode()->GetTopLeftTextEnabled() &&
+    return true &&
            this->External->GetMRMLApplicationLogic()
                ->GetCornerTextLogic()
                ->GetBottomLeftEnabled();
   case vtkMRMLCornerTextLogic::CORNER_TR:
-    return this->External->GetMRMLSliceNode()->GetTopRightTextEnabled() &&
+    return true &&
            this->External->GetMRMLApplicationLogic()
                ->GetCornerTextLogic()
                ->GetTopRightEnabled();
   case vtkMRMLCornerTextLogic::EDGE_B:
-    return this->External->GetMRMLSliceNode()->GetBottomEdgeTextEnabled();
+    return true;
   case vtkMRMLCornerTextLogic::EDGE_R:
-    return this->External->GetMRMLSliceNode()->GetRightEdgeTextEnabled();
+    return true;
   case vtkMRMLCornerTextLogic::EDGE_L:
-    return this->External->GetMRMLSliceNode()->GetLeftEdgeTextEnabled();
+    return true;
   case vtkMRMLCornerTextLogic::EDGE_T:
-    return this->External->GetMRMLSliceNode()->GetTopEdgeTextEnabled();
+    return true;
   default:
     return false;
   }
@@ -305,7 +305,6 @@ void vtkMRMLCornerTextDisplayableManager::OnMRMLSceneEndBatchProcess()
 //---------------------------------------------------------------------------
 void vtkMRMLCornerTextDisplayableManager::OnMRMLDisplayableNodeModifiedEvent(vtkObject* caller)
 {
-    this->Internal->UpdateCornerAnnotationsFromSliceNode(/* printDMWarnings= */false, /* printLogicWarnings= */ false);
 }
 
 //---------------------------------------------------------------------------
