@@ -15,6 +15,7 @@ Version:   $Revision: 1.2 $
 // MRML includes
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSliceNode.h"
+#include "vtkMRMLTextNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLVolumeNode.h"
 
@@ -927,8 +928,6 @@ void vtkMRMLSliceNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLWriteXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
 
-  vtkMRMLWriteXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
-
   vtkMRMLWriteXMLEndMacro();
 }
 
@@ -1021,8 +1020,6 @@ void vtkMRMLSliceNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLEnumMacro(slabReconstructionType, SlabReconstructionType);
   vtkMRMLReadXMLFloatMacro(slabReconstructionThickness, SlabReconstructionThickness);
   vtkMRMLReadXMLFloatMacro(slabReconstructionOversamplingFactor, SlabReconstructionOversamplingFactor);
-
-  vtkMRMLReadXMLBooleanMacro(topLeftTextEnabled, TopLeftTextEnabled);
 
   vtkMRMLReadXMLEndMacro();
 
@@ -2114,7 +2111,13 @@ vtkImplicitFunction* vtkMRMLSliceNode::GetImplicitFunctionWorld()
 }
 
 //-----------------------------------------------------------
-void vtkMRMLSliceNode::SetAndObserverTopLeftTextNode(vtkMRMLNode* textNode)
+void vtkMRMLSliceNode::SetAndObserveCornerAnnotationsTextNode(vtkMRMLNode* textNode)
 {
-  this->SetAndObserveNodeReferenceID(this->GetTopLeftTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+  this->SetAndObserveNodeReferenceID(this->GetCornerAnnotationsTextNodeReferenceRole(), textNode ? textNode->GetID() : nullptr);
+}
+
+//-----------------------------------------------------------
+vtkMRMLTextNode* vtkMRMLSliceNode::GetCornerAnnotationsTextNode()
+{
+  return vtkMRMLTextNode::SafeDownCast(this->GetNodeReference(this->GetCornerAnnotationsTextNodeReferenceRole()));
 }

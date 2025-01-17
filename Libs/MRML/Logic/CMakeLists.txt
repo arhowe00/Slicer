@@ -66,6 +66,7 @@ set(MRMLLogic_SRCS
   vtkMRMLAbstractVolumeResampler.cxx
   vtkMRMLApplicationLogic.cxx
   vtkMRMLColorLogic.cxx
+  vtkMRMLCornerTextLogic.cxx
   vtkMRMLDisplayableHierarchyLogic.cxx
   vtkMRMLRemoteIOLogic.cxx
   vtkMRMLLayoutLogic.cxx
