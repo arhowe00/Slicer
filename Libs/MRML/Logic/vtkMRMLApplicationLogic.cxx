@@ -484,6 +484,9 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
     <property name="SlabReconstructionType" prefix="Type: " display-level="always"/>
   </corner>
 </annotations>)");
+      tmpCornerAnnotations->SetSaveWithScene(false);
+      tmpCornerAnnotations->SetHideFromEditors(true);
+
       cornerAnnotationsTextNode = newScene->AddNode(tmpCornerAnnotations);
     }
     assert(vtkMRMLTextNode::SafeDownCast(cornerAnnotationsTextNode));
