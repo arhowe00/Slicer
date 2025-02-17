@@ -63,6 +63,7 @@ protected slots:
   void setFontFamily(const QString& fontFamily);
   void setFontSize(int fontSize);
   void setDICOMAnnotationsPersistence(bool enable);
+  void restoreDefaults();
 
   void onLayoutLogicModifiedEvent();
 
