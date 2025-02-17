@@ -151,14 +151,14 @@ void qSlicerCornerTextModule::writeSettings() const
     return;
   }
 
-  settings->setValue("DataProbe/sliceViewAnnotations.enabled", cornerTextLogic->GetSliceViewAnnotationsEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.enabled", static_cast<int>(cornerTextLogic->GetSliceViewAnnotationsEnabled()));
   settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetDisplayStrictness());
   settings->setValue("DataProbe/sliceViewAnnotations.fontSize", cornerTextLogic->GetFontSize());
   settings->setValue("DataProbe/sliceViewAnnotations.fontFamily", QString::fromStdString(cornerTextLogic->GetFontFamily()));
 
-  settings->setValue("DataProbe/sliceViewAnnotations.bottomLeft", cornerTextLogic->GetBottomLeftEnabled());
-  settings->setValue("DataProbe/sliceViewAnnotations.topLeft", cornerTextLogic->GetTopLeftEnabled());
-  settings->setValue("DataProbe/sliceViewAnnotations.topRight", cornerTextLogic->GetTopRightEnabled());
+  settings->setValue("DataProbe/sliceViewAnnotations.bottomLeft", static_cast<int>(cornerTextLogic->GetBottomLeftEnabled()));
+  settings->setValue("DataProbe/sliceViewAnnotations.topLeft", static_cast<int>(cornerTextLogic->GetTopLeftEnabled()));
+  settings->setValue("DataProbe/sliceViewAnnotations.topRight", static_cast<int>(cornerTextLogic->GetTopRightEnabled()));
 }
 
 //-----------------------------------------------------------------------------
