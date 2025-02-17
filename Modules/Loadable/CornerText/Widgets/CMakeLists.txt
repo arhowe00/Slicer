@@ -5,6 +5,7 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
+  ${qSlicerTextsModuleWidgets_INCLUDE_DIRS}
   )
 
 set(${KIT}_SRCS
@@ -25,6 +26,7 @@ set(${KIT}_RESOURCES
   )
 
 set(${KIT}_TARGET_LIBRARIES
+  qSlicerTextsModuleWidgets
   )
 
 #-----------------------------------------------------------------------------
