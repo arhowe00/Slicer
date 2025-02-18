@@ -42,13 +42,13 @@ public:
 
   typedef std::unordered_map<std::string, std::string> XMLTagAttributes;
 
-  // Layers
+  // Roles
 
-  enum Layer
+  enum Role
   {
-    LAYER_FOREGROUND = 0,
-    LAYER_BACKGROUND,
-    LAYER_LABEL
+    ROLE_FOREGROUND = 0,
+    ROLE_BACKGROUND,
+    ROLE_LABEL
   };
 
   vtkTypeMacro(vtkMRMLAbstractAnnotationPropertyValueProvider, vtkObject);
@@ -69,29 +69,29 @@ public:
                                      : defaultValue;
   }
 
-  static int GetLayerValueAsInteger(const XMLTagAttributes &attributes,
-      int defaultValue = LAYER_FOREGROUND)
+  static int GetRoleValueAsInteger(const XMLTagAttributes &attributes,
+      int defaultValue = ROLE_FOREGROUND)
   {
-    if (attributes.count("layer"))
+    if (attributes.count("role"))
     {
-      std::string layer = attributes.at("layer");
+      std::string role = attributes.at("role");
 
       auto getDigit = [](const std::string &s)
       {
         return std::all_of(s.begin(), s.end(), ::isdigit) ? std::stoi(s) : -1;
       };
 
-      if (layer == "foreground" || getDigit(layer) == LAYER_FOREGROUND)
+      if (role == "foreground" || getDigit(role) == ROLE_FOREGROUND)
       {
-        return LAYER_FOREGROUND;
+        return ROLE_FOREGROUND;
       }
-      else if (layer == "background" || getDigit(layer) == LAYER_BACKGROUND)
+      else if (role == "background" || getDigit(role) == ROLE_BACKGROUND)
       {
-        return LAYER_BACKGROUND;
+        return ROLE_BACKGROUND;
       }
-      else if (layer == "label" || getDigit(layer) == LAYER_LABEL)
+      else if (role == "label" || getDigit(role) == ROLE_LABEL)
       {
-        return LAYER_LABEL;
+        return ROLE_LABEL;
       }
     }
     return defaultValue;

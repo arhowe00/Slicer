@@ -452,9 +452,9 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   <!-- For corners -->
   <corner position="bottom-left">
     <!-- Generic properties -->
-    <property name="VolumeName" layer="label" prefix="L: " display-level="1"/>
-    <property name="VolumeName" layer="foreground" prefix="F: " display-level="1"/>
-    <property name="VolumeName" layer="background" prefix="B: " display-level="1"/>
+    <property name="VolumeName" role="label" prefix="L: " display-level="1"/>
+    <property name="VolumeName" role="foreground" prefix="F: " display-level="1"/>
+    <property name="VolumeName" role="background" prefix="B: " display-level="1"/>
   </corner>
 
   <corner position="top-left">
@@ -462,12 +462,12 @@ void vtkMRMLApplicationLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
     <property name="PatientName" display-level="2"/>
     <property name="PatientID" prefix="ID: " display-level="1"/>
     <property name="PatientInfo" display-level="2"/>
-    <property name="SeriesDate" prefix="B: " layer="background" display-level="2"/>
-    <property name="SeriesDate" prefix="F: " layer="foreground" display-level="2"/>
-    <property name="SeriesTime" prefix="B: " layer="background" display-level="3"/>
-    <property name="SeriesTime" prefix="F: " layer="foreground" display-level="3"/>
-    <property name="SeriesDescription" prefix="B: " layer="background" display-level="3"/>
-    <property name="SeriesDescription" prefix="F: " layer="foreground" display-level="3"/>
+    <property name="SeriesDate" prefix="B: " role="background" display-level="2"/>
+    <property name="SeriesDate" prefix="F: " role="foreground" display-level="2"/>
+    <property name="SeriesTime" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesTime" prefix="F: " role="foreground" display-level="3"/>
+    <property name="SeriesDescription" prefix="B: " role="background" display-level="3"/>
+    <property name="SeriesDescription" prefix="F: " role="foreground" display-level="3"/>
   </corner>
 
   <corner position="top-right">
