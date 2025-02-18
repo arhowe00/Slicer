@@ -59,7 +59,7 @@ protected slots:
   void setTopLeftCornerActive(bool enable);
   void setTopRightCornerActive(bool enable);
   void setBottomLeftCornerActive(bool enable);
-  void setAnnotationDisplayLevel(int level);  // 1, 2, or 3
+  void setIncludeDisplayLevelsLte(int level);  // 1, 2, or 3
   void setFontFamily(const QString& fontFamily);
   void setFontSize(int fontSize);
   void setDICOMAnnotationsPersistence(bool enable);

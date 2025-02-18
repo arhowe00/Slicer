@@ -87,8 +87,8 @@ public:
   vtkSetMacro(TopRightEnabled, bool);
   vtkBooleanMacro(TopRightEnabled, bool);
 
-  vtkGetMacro(DisplayStrictness, int);
-  vtkSetMacro(DisplayStrictness, int);
+  vtkGetMacro(IncludeDisplayLevelsLte, int);
+  vtkSetMacro(IncludeDisplayLevelsLte, int);
 
   vtkGetMacro(FontSize, int);
   vtkSetMacro(FontSize, int);
@@ -132,7 +132,7 @@ private:
 
   bool SliceViewAnnotationsEnabled{true};
   bool BottomLeftEnabled{true}, TopLeftEnabled{true}, TopRightEnabled{true};
-  int DisplayStrictness{0};
+  int IncludeDisplayLevelsLte{1};
   int FontSize{14};
   std::string FontFamily{"Arial"};
   std::unordered_map<

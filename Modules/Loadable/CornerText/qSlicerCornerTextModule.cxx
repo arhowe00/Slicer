@@ -129,7 +129,7 @@ void qSlicerCornerTextModule::readSettings() const
       this->appLogic()->GetCornerTextLogic();
 
   cornerTextLogic->SetSliceViewAnnotationsEnabled(settings->value("DataProbe/sliceViewAnnotations.enabled", 1).toBool());
-  cornerTextLogic->SetDisplayStrictness(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
+  cornerTextLogic->SetIncludeDisplayLevelsLte(settings->value("DataProbe/sliceViewAnnotations.displayLevel", 1).toInt());
   cornerTextLogic->SetFontSize(settings->value("DataProbe/sliceViewAnnotations.fontSize", 14).toInt());
   cornerTextLogic->SetFontFamily(settings->value("DataProbe/sliceViewAnnotations.fontFamily", "Times").toString().toStdString());
 
@@ -152,7 +152,7 @@ void qSlicerCornerTextModule::writeSettings() const
   }
 
   settings->setValue("DataProbe/sliceViewAnnotations.enabled", static_cast<int>(cornerTextLogic->GetSliceViewAnnotationsEnabled()));
-  settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetDisplayStrictness());
+  settings->setValue("DataProbe/sliceViewAnnotations.displayLevel", cornerTextLogic->GetIncludeDisplayLevelsLte());
   settings->setValue("DataProbe/sliceViewAnnotations.fontSize", cornerTextLogic->GetFontSize());
   settings->setValue("DataProbe/sliceViewAnnotations.fontFamily", QString::fromStdString(cornerTextLogic->GetFontFamily()));
 
