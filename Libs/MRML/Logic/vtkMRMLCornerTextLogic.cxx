@@ -59,7 +59,7 @@ void vtkMRMLCornerTextLogic::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Registered Providers:\n";
   for (const auto& provider : this->registeredProviders)
   {
-    os << indent.GetNextIndent() << provider.first << ": " 
+    os << indent.GetNextIndent() << provider.first << ": "
        << provider.second.GetPointer() << "\n";
   }
 }
@@ -148,26 +148,32 @@ vtkMRMLTextNode *vtkMRMLCornerTextLogic::GetCornerAnnotations(vtkMRMLScene *mrml
                                                const std::string& viewName)
 {
   vtkMRMLTextNode *textNode;
-  const std::string baseName = "CornerAnnotationsSingleton",
-                    viewArrStr = "Layout" + std::to_string(viewArrangement);
+  const std::string baseName = "CornerAnnotationsSingleton";
+  const std::string viewArrStr = "Layout" + std::to_string(viewArrangement);
 
   // check if a layout specific and view specific text node exists
   if ((textNode = vtkMRMLTextNode::SafeDownCast(mrmlScene->GetSingletonNode(
            (viewArrStr + viewName + baseName).c_str(), "vtkMRMLTextNode"))))
+  {
     return textNode;
+  }
 
   // check if a layout specific text node exists
   if ((textNode = vtkMRMLTextNode::SafeDownCast(mrmlScene->GetSingletonNode(
            (viewArrStr + baseName).c_str(), "vtkMRMLTextNode"))))
+  {
     return textNode;
+  }
 
   // if not, then CornerAnnotationsSingleton should always exist as it is
   // created with the scene.
   if (!(textNode = vtkMRMLTextNode::SafeDownCast(
             mrmlScene->GetSingletonNode(baseName.c_str(), "vtkMRMLTextNode"))))
+  {
     vtkErrorWithObjectMacro(mrmlScene,
                             "vtkMRMLCornerTextLogic::GetCornerAnnotations: "
                             "failed to get text node from scene");
+  }
 
   return textNode;
 }
