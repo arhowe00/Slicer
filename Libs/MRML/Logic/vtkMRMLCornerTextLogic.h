@@ -132,9 +132,9 @@ private:
 
   bool SliceViewAnnotationsEnabled{true};
   bool BottomLeftEnabled{true}, TopLeftEnabled{true}, TopRightEnabled{true};
-  int IncludeDisplayLevelsLte{1};
+  int IncludeDisplayLevelsLte{3};
   int FontSize{14};
-  std::string FontFamily{"Arial"};
+  std::string FontFamily{"Times"};
   std::unordered_map<
       std::string,
       vtkSmartPointer<vtkMRMLAbstractAnnotationPropertyValueProvider>>

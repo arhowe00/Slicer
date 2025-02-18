@@ -333,7 +333,7 @@ void qSlicerCornerTextSettingsWidget::restoreDefaults()
 
   // Set defaults
   constexpr int DEFAULT_ENABLED = 1;
-  constexpr int DEFAULT_DISPLAY_LEVEL = 1;
+  constexpr int DEFAULT_DISPLAY_LEVEL = 3;
   constexpr int DEFAULT_TOP_LEFT = 0;
   constexpr int DEFAULT_TOP_RIGHT = 0;
   constexpr int DEFAULT_BOTTOM_LEFT = 1;
